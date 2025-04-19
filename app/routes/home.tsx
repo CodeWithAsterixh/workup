@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { Button } from "~/components/ui/button";
+import { Link } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,7 +17,9 @@ export default function Home() {
     <p>Find what works best for you</p>
 
     <div className="cta">
+      <Link to={"/templates"}>
       <Button className="cursor-pointer !bg-secondary !text-primary flex items-center !h-fit !py-3 !text-base md:text-lg !px-5 md:!px-10">Find template <i className="pi pi-arrow-right"></i></Button>
+      </Link>
     </div>
     </div>
     <div className="template-display">
