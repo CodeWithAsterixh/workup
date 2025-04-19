@@ -1,0 +1,1 @@
+export type previewGeneratorProcess = "loading"|"updating"|"ready"|"error"

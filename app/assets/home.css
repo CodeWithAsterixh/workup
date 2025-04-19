@@ -1,0 +1,35 @@
+.home-hero{
+    @apply w-full grid grid-cols-1 min-[498px]:grid-cols-2 gap-4 h-fit min-h-screen min-[498px]:h-screen bg-primary text-secondary;
+}
+.home-hero .headline{
+    @apply w-full isolate min-[498px]:px-10 py-20 min-[498px]:py-0 flex relative flex-col items-center min-[498px]:items-start gap-3 justify-center px-4;
+}
+.home-hero .headline{
+    filter: drop-shadow(0px 10px 10px rgb(29, 29, 29));
+}
+
+.home-hero .headline::before{
+    content: '';
+}
+.home-hero .headline::before{
+    @apply size-full z-[-1] absolute [clip-path:_ellipse(100%_100%_at_50%_0%)] min-[498px]:[clip-path:_ellipse(100%_100%_at_0%_50%)] top-0 left-0 bg-[#505050];
+
+}
+
+
+.home-hero .headline h2{
+    @apply text-3xl md:text-5xl font-bold text-center min-[498px]:text-left;
+}
+.home-hero .headline p{
+    @apply opacity-50 text-center min-[498px]:text-left;
+}
+.home-hero .headline .cta{
+    @apply mt-5;
+}
+
+.home-hero .template-display{
+    @apply h-full flex items-center justify-center p-4 min-[498px]:px-10;
+}
+.home-hero .template-display img{
+    @apply rounded-sm;
+}

@@ -1,0 +1,25 @@
+.templates-page {
+  @apply container mx-auto py-8;
+}
+
+.templates-page h1 {
+  @apply text-2xl font-bold mb-4;
+}
+
+.templates-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.template-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
+  @apply transition-transform transform hover:scale-105;
+}
+
+.template-card h2 {
+  @apply text-lg font-semibold p-3 bg-gray-100;
+}
+
+.template-card .template-preview {
+  @apply p-4;
+  @apply flex items-center justify-center h-32 bg-gray-200 text-gray-600; /* Example styling */
+}
