@@ -8,6 +8,7 @@ import type { previewGeneratorProcess } from "~/lib/types";
 import TemplateForm, { type FormData } from "~/components/templateForm";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
+import Loading from "~/components/loading";
 
 
 
@@ -16,44 +17,49 @@ export default function Template({ params }: Route.ComponentProps) {
   const [selectedSlide, setSelectedSlide] = useState<"front" | "back">("front");
   const [process, setProcess] = useState<previewGeneratorProcess>("loading");
   const [preview, setPreview] = useState<string>()
-  const formFront = useForm<FormData>({
-    defaultValues: template?template["front"].default:{}
-  })
-  const formBack = useForm<FormData>({
-    defaultValues: template?template["back"].default:{}
-  })
-  const [formValuesBack, setFormValuesBack] = useState<FormData>(template?template["back"].default:{})
-  const [formValuesFront, setFormValuesFront] = useState<FormData>(template?template["front"].default:{})
-  
+  const [status, setStatus] = useState<"loading"|"done">("loading")
+
+
+  const defaultValues = template?{
+    ...template["front"].default,
+    ...template["back"].default,
+  }:{};
+  const form = useForm<FormData>({
+    defaultValues: defaultValues,
+  });
+  const [formValues, setFormValues] = useState<FormData>(defaultValues);
+
   // Watch for form changes and update formValues
-  React.useEffect(() => {
-    const subscriptionFront = formFront.watch((value) => {
-      setFormValuesFront(value as FormData);
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      setFormValues(value as FormData);
       setProcess("updating");
     });
-    const subscriptionBack = formBack.watch((value) => {
-      setFormValuesBack(value as FormData);
-      setProcess("updating");
-    });
-    
-    return () => {
-      subscriptionBack.unsubscribe()
-      subscriptionFront.unsubscribe()
-    };
-  }, [formFront.watch,formBack.watch]);
+
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   
-
+  useEffect(() => {
+    if(template){
+      setStatus("done")
+    }
+  }, [template])
+  
+  
+  if (status==="loading") {
+    return <Loading />;
+  }
   if (!template) {
     return <notfound.template id={params.id} />;
   }
+ 
 
   const handleSlide = (slide:typeof selectedSlide)=>{
     setSelectedSlide(slide)
     setProcess("updating")
   }
   const onSubmit = (formData: FormData)=>{
-    console.log(formData)
   }
   const handleDownload = async () => {
     if (!preview) return;
@@ -106,7 +112,9 @@ export default function Template({ params }: Route.ComponentProps) {
   return (
     <main className="template-area">
       <section className="template-content">
-        <TemplateForm submit={onSubmit} form={selectedSlide==="back"?formBack:formFront} data={template[selectedSlide].default}/>
+        <TemplateForm submit={onSubmit}
+          form={form}
+          data={defaultValues}/>
         <article className="content-display">
           <header>
             <strong>Preview</strong>
@@ -114,7 +122,9 @@ export default function Template({ params }: Route.ComponentProps) {
           </header>
          <PreviewCard setPreview={setPreview} setProcess={setProcess} status={process}>
          <main className="preview">
-         <TemplateRenderer data={selectedSlide==="back"?formValuesBack:formValuesFront} template={template} position={selectedSlide}/>
+         <TemplateRenderer data={formValues} // Use combined form values
+                template={template}
+                position={selectedSlide}/>
          </main>
          </PreviewCard>
          <div className="flex gap-2 mt-4 justify-center">

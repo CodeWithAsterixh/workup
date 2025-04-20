@@ -8,6 +8,8 @@ import NeonNexus from "./NeonNexus";
 import EmeraldCurve from "./EmeraldCurve";
 import GoldenBar from "./GoldenBar";
 import MaroonRibbon from "./MaroonRibbon";
+import HexaSplit from "./HexaSplit";
+import GoldWave from "./GoldWave";
 
 export interface template {
     front: {
@@ -28,7 +30,9 @@ const templates:Record<string,template> = {
     NeonNexus,
     EmeraldCurve,
     GoldenBar,
-    MaroonRibbon
+    MaroonRibbon,
+    HexaSplit,
+    GoldWave
 }
 
 export default templates;
