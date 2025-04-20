@@ -1,8 +1,8 @@
 .home-hero{
-    @apply w-full grid grid-cols-1 min-[498px]:grid-cols-2 gap-4 h-fit min-h-screen min-[498px]:h-screen bg-primary text-secondary;
+    @apply w-full grid grid-cols-1 min-[498px]:grid-cols-[1fr_3fr] sm:grid-cols-2 gap-4 h-fit min-h-screen min-[498px]:h-screen bg-primary text-secondary;
 }
 .home-hero .headline{
-    @apply w-full isolate min-[498px]:px-10 py-20 min-[498px]:py-0 flex relative flex-col items-center min-[498px]:items-start gap-3 justify-center px-4;
+    @apply z-10 w-full isolate min-[498px]:px-10 py-20 min-[498px]:py-0 flex relative flex-col items-center min-[498px]:items-start gap-3 justify-center px-4;
 }
 .home-hero .headline{
     filter: drop-shadow(0px 10px 10px rgb(29, 29, 29));
@@ -12,24 +12,39 @@
     content: '';
 }
 .home-hero .headline::before{
-    @apply size-full z-[-1] absolute [clip-path:_ellipse(100%_100%_at_50%_0%)] min-[498px]:[clip-path:_ellipse(100%_100%_at_0%_50%)] top-0 left-0 bg-[#505050];
+    @apply h-[calc(100%+5rem)] min-[498px]:h-full w-full min-[498px]:w-[calc(100%+5rem)] sm:w-[calc(100%+7rem)] z-[-1] absolute [clip-path:_ellipse(100%_100%_at_50%_0%)] min-[498px]:[clip-path:_ellipse(100%_100%_at_0%_50%)] top-0 left-0 bg-[#505050];
 
 }
 
 
-.home-hero .headline h2{
-    @apply text-3xl md:text-5xl font-bold text-center min-[498px]:text-left;
+.home-hero .headline h2 {
+    @apply text-3xl md:text-5xl font-bold text-center min-[498px]:text-left text-white; /* Changed text color to white */
+    text-shadow: 2px 2px 4px #000000; /* Added text shadow for emphasis */
 }
 .home-hero .headline p{
     @apply opacity-50 text-center min-[498px]:text-left;
 }
-.home-hero .headline .cta{
+.home-hero .headline .cta a {
     @apply mt-5;
 }
 
-.home-hero .template-display{
-    @apply h-full flex items-center justify-center p-4 min-[498px]:px-10;
+.home-hero .headline .cta a button{
+    @apply cursor-pointer bg-secondary text-primary flex items-center h-fit py-3 text-base md:text-lg px-5 md:px-10 rounded-md shadow-md hover:bg-secondary/80 transition-colors duration-200; /* Added rounded corners, shadow, and transition */
 }
-.home-hero .template-display img{
-    @apply rounded-sm;
+
+
+.home-hero .template-display img {
+    @apply rounded-lg shadow-xl; /* Added rounded corners and a larger shadow */
+    max-width: 100%; /* Ensure image is responsive */
+    height: auto;
+}
+.home-hero .template-display {
+    @apply h-full flex items-center justify-center p-4  min-[498px]:pt-4 min-[498px]:px-10 relative; /* Make container relative */
+}
+
+.home-hero .template-display::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-full bg-gradient-to-r from-black to-transparent rounded-lg shadow-xl; /* Add gradient overlay */
+    opacity: 0.3; /* Adjust opacity as needed */
+    pointer-events: none; /* Make sure it doesn't interfere with interactions */
 }

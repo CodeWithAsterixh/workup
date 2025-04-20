@@ -6,7 +6,7 @@ type Props = {
   children: React.ReactNode;
   status?: previewGeneratorProcess;
   setProcess?: (process: previewGeneratorProcess) => void;
-  setPreview:(preview: string) => void;
+  setPreview?:(preview: string) => void;
 };
 
 export default function PreviewCard({ children, setProcess, status,setPreview }: Props) {
@@ -33,7 +33,7 @@ export default function PreviewCard({ children, setProcess, status,setPreview }:
                 setPreviewImage(url);
                 setPreviewProcess("ready");
                 setProcess?.("ready");
-                setPreview(url)
+                setPreview?.(url)
               } else {
                 setPreviewProcess("error");
                 setProcess?.("error");
@@ -76,7 +76,7 @@ export default function PreviewCard({ children, setProcess, status,setPreview }:
       </div>
       <div className={
         cn(
-          "w-full max-w-fit relative",
+          "w-full max-w-fit max-h-full relative",
           !previewImage&&"h-52 max-w-full"
         )
       }>

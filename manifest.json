@@ -1,0 +1,12 @@
+{
+    "name":"workup business card builder",
+    "short_name": "workup",
+    "start_url":"/",
+    "display":"standalone",
+    "background_color": "#242424",
+    "theme_color":"#242424",
+    "icons":{
+        "src": "/logo.png",
+        "type":"image/png"
+    }
+}
