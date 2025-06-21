@@ -39,7 +39,7 @@ const blob = (top: string, left: string, size: number, color: string) => ({
     backgroundColor: color,
     borderRadius: '50%',
     filter: 'blur(20px)',
-    opacity: 0.6,
+    opacity: 0.3,
   })
 const frontStyles: { [key: string]: React.CSSProperties } = {
   container: {

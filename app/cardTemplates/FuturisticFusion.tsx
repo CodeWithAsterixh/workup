@@ -34,10 +34,9 @@ const neonCircle = (size: number, x: string, y: string): React.CSSProperties => 
     width: size,
     height: size,
     borderRadius: '50%',
-    boxShadow: `0 0 ${size / 4}px rgba(58,192,255,0.6)`,
-    border: '2px solid rgba(58,192,255,0.4)',
     top: y,
     left: x,
+    background: "radial-gradient(circle, rgba(40,40,190,1) 0%, rgba(0,0,0,0) 40%, rgba(40,40,190,0.2) 70%, rgba(0,0,0,0) 100%)",
   })
 
 const frontStyles: { [key: string]: React.CSSProperties } = {
@@ -116,7 +115,7 @@ export function FuturisticFusionFront({ logo_image, fullName, jobTitle, phone, e
         <div style={frontStyles.contactList}>
           <p style={frontStyles.contactItem}>📞 {props.phone}</p>
           <p style={frontStyles.contactItem}>✉️ {props.email}</p>
-          <p style={frontStyles.contactItem}>🌐 {props.website}</p>
+          {props.website&&<p style={frontStyles.contactItem}>🌐 {props.website}</p>}
         </div>
       </div>
     </div>
@@ -151,6 +150,9 @@ const backStyles: { [key: string]: React.CSSProperties } = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     textAlign: 'center',
+    display:"flex",
+    alignItems: "center",
+    flexDirection:"column"
   },
   companyName: {
     fontSize: '20px',

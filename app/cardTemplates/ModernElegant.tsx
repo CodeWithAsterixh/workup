@@ -9,7 +9,6 @@ type FrontProps = {
 };
 
 type BackProps = {
-  profile_image?: string;
   fullName: string;
   jobTitle: string;
   phone: string;
@@ -31,7 +30,6 @@ export const defaultModernBack: BackProps = {
   phone: "+000 2103 8894",
   email: "info@websiteurl.com",
   address: "Your Address Here, 001234",
-  profile_image: "/logo.png",
   website: "www.yourwebsite.com",
 };
 
@@ -151,8 +149,8 @@ const backStyles: { [k: string]: React.CSSProperties } = {
   },
 };
 
-export function ModernElegantBack({ profile_image, fullName, jobTitle, phone, email, address, website }: BackProps) {
-  const props = { ...defaultModernBack, profile_image, fullName, jobTitle, phone, email, address, website };
+export function ModernElegantBack({ fullName, jobTitle, phone, email, address, website }: BackProps) {
+  const props = { ...defaultModernBack, fullName, jobTitle, phone, email, address, website };
   return (
     <div style={backStyles.container}>
       <div style={backStyles.header}>

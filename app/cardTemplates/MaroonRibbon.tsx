@@ -50,17 +50,16 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
   },
   ribbon: {
     position: 'absolute',
-    top: '50%',
+    top: 'calc(50% + 20px)',
     left: 0,
     width: '100%',
     height: '36px',
     backgroundColor: '#CFA18D',
-    borderRadius: '0 0 12px 12px',
     transform: 'translateY(-50%)',
   },
   logoArea: {
     position: 'absolute',
-    top: 'calc(50% - 40px)',
+    top: 'calc(50% - 50px)',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     backgroundColor: '#FFFFFF',
@@ -74,16 +73,20 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     objectFit: 'contain',
   },
   company: {
-    marginTop: '56px',
+    marginTop: '72px',
     fontSize: '18px',
     fontWeight: 'bold',
     textAlign: 'center',
+    zIndex:10,
+    position:"relative"
   },
   tagline: {
     fontSize: '10px',
-    marginTop: '4px',
+    marginTop: '12px',
     textAlign: 'center',
     color: '#E0CFC3',
+    zIndex:10,
+    position:"relative"
   },
   websiteText: {
     position: 'absolute',

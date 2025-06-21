@@ -93,7 +93,10 @@ const frontStyles: { [k: string]: React.CSSProperties } = {
     top: '50%',
     right: '16px',
     transform: 'translateY(-50%)',
-    textAlign: 'center',
+    textAlign: 'end',
+    display: "flex",
+    flexDirection:"column",
+    alignItems: "flex-end"
   },
   logoImage: {
     width: '60px',
@@ -104,6 +107,7 @@ const frontStyles: { [k: string]: React.CSSProperties } = {
     fontSize: '8px',
     color: '#6B7280',
     marginTop: '4px',
+    maxWidth: "150px",
   },
   squaresTopRight: {
     position: 'absolute',
@@ -149,13 +153,13 @@ export function SkylineModernFront({
       <div style={frontStyles.contactList}>
         <p style={frontStyles.contactItem}><span style={frontStyles.icons}>📞</span>{props.phone}</p>
         <p style={frontStyles.contactItem}><span style={frontStyles.icons}>✉️</span>{props.email}</p>
-        <p style={frontStyles.contactItem}><span style={frontStyles.icons}>🌐</span>{props.website}</p>
+        {props.website&&<p style={frontStyles.contactItem}><span style={frontStyles.icons}>🌐</span>{props.website}</p>}
         <p style={frontStyles.contactItem}><span style={frontStyles.icons}>📍</span>{props.address}</p>
       </div>
 
       <div style={frontStyles.logoArea}>
         <img src={props.logo_image} alt="Logo" style={frontStyles.logoImage} />
-        <p style={frontStyles.tagline}>{props.tagline}</p>
+        <p style={frontStyles.tagline}>{props.tagline.slice(0, 100)}</p>
       </div>
 
       <div style={frontStyles.squaresBottomLeft}>
@@ -186,7 +190,10 @@ const backStyles: { [key: string]: React.CSSProperties } = {
     position: 'absolute',
     bottom: '16px',
     right: '16px',
-    textAlign: 'center',
+    textAlign: 'end',
+    display: "flex",
+    flexDirection:"column",
+    alignItems: "flex-end"
   },
   logoImage: {
     width: '50px',
@@ -197,6 +204,7 @@ const backStyles: { [key: string]: React.CSSProperties } = {
     fontSize: '8px',
     color: '#6B7280',
     marginTop: '4px',
+    maxWidth: "150px",
   },
 };
 
@@ -212,7 +220,7 @@ export function SkylineModernBack({ logo_image, companyName, tagline }: BackProp
 
       <div style={backStyles.logoArea}>
         <img src={props.logo_image} alt="Logo" style={backStyles.logoImage} />
-        <p style={backStyles.tagline}>{props.tagline}</p>
+        <p style={backStyles.tagline}>{props.tagline.slice(0, 100)}</p>
       </div>
     </div>
   );

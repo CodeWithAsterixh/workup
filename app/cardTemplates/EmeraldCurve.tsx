@@ -71,11 +71,13 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     fontSize: '14px',
     fontWeight: 'bold',
     margin: 0,
+    maxWidth: "100px"
   },
   tagline: {
     fontSize: '8px',
     margin: 0,
     color: '#CCCCCC',
+    maxWidth: "100px"
   },
   website: {
     position: 'absolute',

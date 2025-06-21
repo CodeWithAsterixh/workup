@@ -54,15 +54,16 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '0 16px',
+    padding: '5px 16px 10px 16px',
     fontSize: '10px',
     color: '#2F3E35',
+    position:"relative"
   },
   divider: {
     width: '1px',
     height: '24px',
     backgroundColor: '#2F3E35',
-    margin: '0 8px',
+    margin: '0 8px'
   },
   socialGroup: {
     display: 'flex',
@@ -73,7 +74,6 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexDirection: 'column',
     gap: '2px',
-    textAlign: 'right',
   },
 };
 

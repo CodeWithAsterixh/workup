@@ -9,6 +9,8 @@ import TemplateForm, { type FormData } from "~/components/templateForm";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import Loading from "~/components/loading";
+import {ArrowLeft} from "lucide-react"
+import { Link } from "react-router";
 
 
 
@@ -111,6 +113,10 @@ export default function Template({ params }: Route.ComponentProps) {
 
   return (
     <main className="template-area">
+      <div className="w-full py-5 max-w-5xl flex items-center sticky top-0 bg-white z-50">
+        <Link to={"/templates"}><Button className="!cursor-pointer" variant={"ghost"} ><ArrowLeft/> Back</Button></Link>
+        <h1 className="text-xl font-bold absolute left-1/2 top-1/2 -translate-1/2">{params.id}</h1>
+      </div>
       <section className="template-content">
         <TemplateForm submit={onSubmit}
           form={form}

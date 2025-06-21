@@ -14,11 +14,6 @@ type BackProps = {
   logo_image: string;
   companyName: string;
   tagline: string;
-  socialLinks: {
-    facebook?: string;
-    twitter?: string;
-    linkedin?: string;
-  };
 };
 
 export const defaultFrontProps: FrontProps = {
@@ -35,11 +30,6 @@ export const defaultBackProps: BackProps = {
   logo_image: "/logo.png",
   companyName: "ACME Corp",
   tagline: "Innovating Tomorrow, Today",
-  socialLinks: {
-    facebook: "#",
-    twitter: "#",
-    linkedin: "#",
-  },
 };
 
 const frontStyles: { [key: string]: React.CSSProperties } = {
@@ -60,6 +50,7 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    position:"relative"
   },
   logoWrapper: {
     width: '40px',
@@ -74,6 +65,7 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2563EB',
+    marginBottom: "12px"
   },
   authorSection: {
     display: 'flex',
@@ -91,7 +83,7 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
   divider: {
     height: '1px',
     backgroundColor: '#E5E7EB',
-    margin: '8px 0',
+    margin: '8px 0 0 0',
     border: 'none',
   },
   contactList: {
@@ -182,27 +174,15 @@ const backStyles: { [key: string]: React.CSSProperties } = {
     borderTop: '1px solid rgba(255, 255, 255, 0.2)',
     paddingTop: '8px',
     marginTop: '8px',
-  },
-  socialLinks: {
-    position: 'absolute',
-    bottom: '12px',
-    display: 'flex',
-    gap: '12px',
-  },
-  socialIcon: {
-    fontSize: '14px',
-    cursor: 'pointer',
-    transition: 'color 0.2s',
-  },
+  }
 };
 
 export function SimpleProfessionalBack({
   logo_image,
   companyName,
   tagline,
-  socialLinks,
 }: BackProps) {
-  const props = { ...defaultBackProps, logo_image, companyName, tagline, socialLinks };
+  const props = { ...defaultBackProps, logo_image, companyName, tagline };
 
   return (
     <div style={backStyles.container}>
@@ -215,11 +195,6 @@ export function SimpleProfessionalBack({
       </div>
       <h1 style={backStyles.companyName}>{props.companyName}</h1>
       <p style={backStyles.tagline}>{props.tagline}</p>
-      <div style={backStyles.socialLinks}>
-        {props.socialLinks.facebook && <a href={props.socialLinks.facebook} style={backStyles.socialIcon}>🔵</a>}
-        {props.socialLinks.twitter && <a href={props.socialLinks.twitter} style={backStyles.socialIcon}>🐦</a>}
-        {props.socialLinks.linkedin && <a href={props.socialLinks.linkedin} style={backStyles.socialIcon}>💼</a>}
-      </div>
     </div>
   );
 }

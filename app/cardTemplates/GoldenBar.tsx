@@ -83,7 +83,7 @@ const frontStyles: { [key: string]: React.CSSProperties } = {
   website: {
     fontSize: '10px',
     color: '#1B2A41',
-    margin: 0,
+    marginTop: -10,
   },
 };
 
@@ -129,7 +129,6 @@ const backStyles: { [key: string]: React.CSSProperties } = {
     right: 0,
     height: '32px',
     backgroundColor: '#D4AF37',
-    borderBottomLeftRadius: '12px',
   },
   infoBlock: {
     position: 'relative',

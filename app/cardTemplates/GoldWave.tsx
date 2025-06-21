@@ -60,7 +60,7 @@ const styles = {
     height: '48px',
     objectFit: 'contain',
     display: 'block',
-    margin: '0 auto 16px',
+    margin: '10px auto 16px',
   } as React.CSSProperties,
   brand: {
     fontSize: '20px',
@@ -74,16 +74,20 @@ const styles = {
   tagline: {
     fontSize: '10px',
     textAlign: 'center',
-    color: '#000',
+    color: '#fff',
     margin: 0,
   } as React.CSSProperties,
   infoColumn: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     gap: '8px',
     fontSize: '10px',
     color: '#fff',
     padding: '16px',
+    paddingRight: '32px',
+    height: 'calc(100% - 32px)',
+    width: '60%',
   } as React.CSSProperties,
   infoItem: {
     display: 'flex',
@@ -121,7 +125,7 @@ export function GoldWaveBack(props: BackProps) {
       <div style={{ width: '40%', height: '100%', backgroundColor: '#000', position: 'absolute', top: 0, left: 0 }} />
 
       {/* Info on left */}
-      <div style={{ ...styles.infoColumn, position: 'absolute', top: 0, left: 0, width: '40%' }}>
+      <div style={{ ...styles.infoColumn, position: 'absolute', top: "50%", transform:"translateY(-50%)", left: 0, borderRadius:"0% 100% 40% 0% / 100% 100% 40% 0%", background:"#FFD700" }}>
         <div style={styles.infoItem}><span style={styles.icon}>📍</span>{address}</div>
         <div style={styles.infoItem}><span style={styles.icon}>📞</span>{phone}</div>
         <div style={styles.infoItem}><span style={styles.icon}>✉️</span>{email}</div>
@@ -129,7 +133,7 @@ export function GoldWaveBack(props: BackProps) {
       </div>
 
       {/* Name & title on right */}
-      <div style={{ position: 'absolute', top: '30%', right: '10%', color: '#FFD700', textAlign: 'right' }}>
+      <div style={{ position: 'absolute', top: "50%", transform:"translateY(-50%)", right: '10%', color: '#FFD700', textAlign: 'right' }}>
         <p style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{fullName}</p>
         <p style={{ margin: 0, fontSize: '12px' }}>{jobTitle}</p>
       </div>
