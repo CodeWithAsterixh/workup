@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { Link } from "react-router";
 import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
+import { SplitText } from "gsap/dist/SplitText";
 import { Button } from "~/components/ui/button";
 import { Edit3, Layers, Clock } from "lucide-react";
 import useGSAP from "../lib/useGsap";
@@ -37,7 +37,7 @@ export default function Home() {
     <main className="bg-gray-50 text-gray-900">
       {/* HERO */}
       <section className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 px-6 md:px-20 pt-24">
-        <div className="space-y-6 max-w-lg text-center sm:text-left">
+        <div className="space-y-6 max-w-lg text-center sm:!text-left">
           <h1
             ref={headlineRef}
             className="text-2xl sm:text-4xl md:text-6xl font-extrabold leading-tight"
