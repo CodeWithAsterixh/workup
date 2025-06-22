@@ -10,6 +10,8 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import React from "react";
+import Header from "./components/header";
+import Footer from "./components/footer";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -46,9 +48,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="manifest" href="/manifest.json"/>
       </head>
       <body>
+        <Header/>
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Footer/>
       </body>
     </html>
   );

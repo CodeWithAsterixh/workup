@@ -110,14 +110,12 @@ const styles = {
   // Back styles
   infoBlock: {
     width: '100%',
-    maxWidth: 260,
     margin: '0 auto',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: 8,
     color: DARK,
     background: '#fff',
-    borderRadius: 10,
     padding: '24px 20px',
     boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
   },
@@ -178,7 +176,7 @@ export function HexaSplitBack(props: BackProps) {
   return (
     <div style={styles.container}>
       <div style={styles.splitRow}>
-        <div style={styles.left}>
+        <div style={{...styles.left, minWidth:300}}>
           <div style={styles.infoBlock}>
             <div>
               <div style={styles.name}>{fullName}</div>

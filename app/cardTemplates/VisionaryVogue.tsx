@@ -148,7 +148,7 @@ const backStyles: { [key: string]: React.CSSProperties } = {
 export function VisionaryVogueBack({ companyName, title }: BackProps) {
   const props = { ...defaultVisionaryBack, companyName, title };
   // take first letter as watermark
-  const initial = props.companyName.charAt(0);
+  const initial = props.companyName.charAt(0).toUpperCase();
   return (
     <div style={backStyles.container}>
       <div style={backStyles.watermark}>{initial}</div>

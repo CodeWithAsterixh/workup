@@ -1,5 +1,5 @@
 .template-area{
-    @apply w-full h-screen relative flex flex-col gap-2 py-2 items-center;
+    @apply w-full h-fit sm:h-screen relative flex flex-col gap-2 py-2 items-center;
 }
 
 /* navigator to show which slide is being edited */
@@ -15,7 +15,7 @@
 
 /* content edited */
 .template-area .template-content{
-    @apply w-full mb-5 sm:mb-0 sm:h-[calc(100%-10rem)] p-2 flex flex-col-reverse items-center sm:grid sm:grid-cols-2 gap-2 sm:gap-4 max-w-5xl relative;
+    @apply w-full mb-5 sm:mb-0 h-fit sm:h-[calc(100%-10rem)] p-2 flex flex-col-reverse items-center sm:grid sm:grid-cols-2 gap-2 sm:gap-4 max-w-5xl relative;
 }
 .template-area .template-content>*{
     @apply border w-full sm:h-full shrink-0;
