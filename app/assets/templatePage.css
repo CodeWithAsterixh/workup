@@ -1,10 +1,10 @@
 .template-area{
-    @apply w-full h-fit sm:h-screen relative flex flex-col gap-2 py-2 items-center;
+    @apply w-full h-fit sm:h-screen relative flex flex-col gap-4 py-5 items-center;
 }
 
 /* navigator to show which slide is being edited */
 .template-area .template-edit-slide{
-    @apply sticky bottom-5 shadow-md w-fit rounded-full p-2 flex gap-3 bg-primary/20 backdrop-blur-lg;
+    @apply shadow-lg shadow-primary/20 w-fit rounded-full p-2 flex gap-3 bg-primary/20 backdrop-blur-lg;
 }
 .template-area .template-edit-slide>*{
     @apply px-10 py-2 rounded-full cursor-pointer duration-500;
@@ -60,7 +60,7 @@
 }
 
 .template-area .template-content .content-form {
-    @apply border-primary/20 h-fit sm:!h-full rounded-lg sm:overflow-y-auto;
+    @apply border-primary/20 h-fit sm:!h-full rounded-lg sm:overflow-y-auto py-5;
 }
 
 .template-area .template-content .content-form::-webkit-scrollbar{

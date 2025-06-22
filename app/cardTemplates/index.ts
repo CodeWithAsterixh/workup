@@ -10,16 +10,19 @@ import GoldenBar from "./GoldenBar";
 import MaroonRibbon from "./MaroonRibbon";
 import HexaSplit from "./HexaSplit";
 import GoldWave from "./GoldWave";
+import type { options } from "~/components/Options";
 
 export interface template {
     front: {
-        component:({}: any) => JSX.Element
-        default:object
+        component:({options, front}: {options:options, front:any}) => JSX.Element
+        default:object,
     };
     back: {
-        component:({}: any) => JSX.Element
-        default:object
+        component:({options, back}: {options:options, back:any}) => JSX.Element
+        default:object,
     };
+        options:options
+
 }
 const templates:Record<string,template> = {
     SimpleProfessional,

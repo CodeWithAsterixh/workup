@@ -1,13 +1,65 @@
 import React from 'react';
 import QRCode from 'react-qr-code';
+import type { options, Validator, ValidatorRule, ValidatorsMap } from '~/components/Options';
+import type { template } from '.';
 
+// Semantic color keys for HexaSplit theme
+type ColorsMap = Record<
+  | 'background'
+  | 'splitDark'
+  | 'splitLight'
+  | 'textDark'
+  | 'textLight'
+  | 'accent'
+  | 'divider',
+  string
+>;
+
+// Helper: truncate based on validators
+const applyValidators = (
+  value: string,
+  rules: Record<keyof Validator, ValidatorRule>
+): string => {
+  const maxLen = rules.maxLength.value as number;
+  return value.slice(0, maxLen);
+};
+
+// Default validators for front props
+const defaultFrontValidators: ValidatorsMap = {
+  logo_image: { maxLength: { value: 100, required: false, type: 'number' }, isUrl: { value: true, required: true, type: 'boolean' } },
+  companyName: { maxLength: { value: 20, required: true, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  tagline: { maxLength: { value: 40, required: false, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  qr_value: { maxLength: { value: 100, required: false, type: 'number' }, isUrl: { value: true, required: true, type: 'boolean' } },
+};
+
+// Default validators for back props
+const defaultBackValidators: ValidatorsMap = {
+  fullName: { maxLength: { value: 20, required: true, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  jobTitle: { maxLength: { value: 30, required: false, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  phone: { maxLength: { value: 20, required: false, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  email: { maxLength: { value: 40, required: false, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  location: { maxLength: { value: 60, required: false, type: 'number' }, isUrl: { value: false, required: false, type: 'boolean' } },
+  website: { maxLength: { value: 50, required: false, type: 'number' }, isUrl: { value: true, required: false, type: 'boolean' } },
+};
+
+// Default semantic colors
+const defaultColors: ColorsMap = {
+  background: '#FFFFFF',
+  splitDark: '#232323',
+  splitLight: '#FFA500',
+  textDark: '#232323',
+  textLight: '#FFFFFF',
+  accent: '#FFA500',
+  divider: '#E5E5E5',
+};
+
+// Props types
 type FrontProps = {
   logo_image: string;
   companyName: string;
   tagline: string;
   qr_value: string;
 };
-
 type BackProps = {
   fullName: string;
   jobTitle: string;
@@ -23,7 +75,6 @@ export const defaultHexaSplitFront: FrontProps = {
   tagline: 'Tagline Here',
   qr_value: 'https://www.example.com',
 };
-
 export const defaultHexaSplitBack: BackProps = {
   fullName: 'Dicky Prayuda',
   jobTitle: 'Graphic Designer',
@@ -33,136 +84,44 @@ export const defaultHexaSplitBack: BackProps = {
   website: 'Yourwebsite.com',
 };
 
-const ACCENT = '#FFA500';
-const DARK = '#232323';
+// Styles factory
+const createStyles = (cols: ColorsMap) => ({
+  container: { width: '100%', height: '100%', borderRadius: 14, overflow: 'hidden', fontFamily: 'Inter, sans-serif', boxShadow: '0 2px 12px rgba(0,0,0,0.07)', display: 'flex', flexDirection: 'column', background: cols.background } as React.CSSProperties,
+  splitRow: { display: 'flex', flex: 1, height: '100%' } as React.CSSProperties,
+  left: { flex: 1, background: cols.splitDark, color: cols.textLight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, minWidth: 0 } as React.CSSProperties,
+  right: { flex: 1, background: cols.splitLight, color: cols.textDark, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, minWidth: 0 } as React.CSSProperties,
+  logo: { width: 56, height: 56, borderRadius: '50%', background: cols.background, objectFit: 'contain', marginBottom: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' } as React.CSSProperties,
+  company: { fontSize: 20, fontWeight: 700, margin: 0, marginBottom: 6, letterSpacing: 0.5, textAlign: 'center' } as React.CSSProperties,
+  tagline: { fontSize: 12, color: cols.divider, margin: 0, marginBottom: 24, textAlign: 'center', fontWeight: 400 } as React.CSSProperties,
+  qrWrapper: { background: cols.background, padding: 8, borderRadius: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginTop: 16 } as React.CSSProperties,
+  infoBlock: { width: '100%', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 8, color: cols.textDark, background: cols.background, padding: 24, boxShadow: '0 1px 8px rgba(0,0,0,0.04)' } as React.CSSProperties,
+  name: { fontSize: 18, fontWeight: 700, margin: 0 } as React.CSSProperties,
+  title: { fontSize: 13, fontWeight: 500, color: cols.accent, margin: 0, marginBottom: 8 } as React.CSSProperties,
+  contactItem: { display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: cols.textDark, wordBreak: 'break-all' } as React.CSSProperties,
+  icon: { fontSize: 13, width: 16, textAlign: 'center' } as React.CSSProperties,
+});
 
-const styles = {
-  container: {
-    width: '100%',
-    height: '100%',
-    borderRadius: '14px',
-    overflow: 'hidden',
-    fontFamily: 'Inter, sans-serif',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    background: '#fff',
-  },
-  splitRow: {
-    display: 'flex',
-    flex: 1,
-    height: '100%',
-  },
-  left: {
-    flex: 1,
-    background: DARK,
-    color: '#fff',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '32px 16px',
-    minWidth: 0,
-  },
-  right: {
-    flex: 1,
-    background: ACCENT,
-    color: DARK,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '32px 16px',
-    minWidth: 0,
-  },
-  logo: {
-    width: 56,
-    height: 56,
-    borderRadius: '50%',
-    background: '#fff',
-    objectFit: 'contain' as const,
-    marginBottom: 16,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-  },
-  company: {
-    fontSize: 20,
-    fontWeight: 700,
-    margin: 0,
-    marginBottom: 6,
-    letterSpacing: 0.5,
-    textAlign: 'center' as const,
-  },
-  tagline: {
-    fontSize: 12,
-    color: '#e9e9e9',
-    margin: 0,
-    marginBottom: 24,
-    textAlign: 'center' as const,
-    fontWeight: 400,
-  },
-  qr: {
-    background: '#fff',
-    padding: 8,
-    borderRadius: 8,
-    boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-    marginTop: 16,
-  },
-  // Back styles
-  infoBlock: {
-    width: '100%',
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 8,
-    color: DARK,
-    background: '#fff',
-    padding: '24px 20px',
-    boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 700,
-    margin: 0,
-    color: DARK,
-  },
-  title: {
-    fontSize: 13,
-    fontWeight: 500,
-    color: ACCENT,
-    margin: 0,
-    marginBottom: 8,
-  },
-  contactItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    fontSize: 12,
-    color: DARK,
-    wordBreak: 'break-all' as const,
-  },
-  icon: {
-    fontSize: 13,
-    width: 16,
-    textAlign: 'center' as const,
-  },
-};
+export function HexaSplitFront({ front, options }: { front: FrontProps; options: options }) {
+  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
+  const cols = { ...defaultColors, ...(options.colors || {}) };
+  const styles = createStyles(cols);
 
-export function HexaSplitFront(props: FrontProps) {
-  const { logo_image, companyName, tagline, qr_value } = { ...defaultHexaSplitFront, ...props };
+  const logo_image = applyValidators(front.logo_image, vals.logo_image);
+  const companyName = applyValidators(front.companyName, vals.companyName);
+  const tagline = applyValidators(front.tagline, vals.tagline);
+  const qrValue = applyValidators(front.qr_value, vals.qr_value);
 
   return (
     <div style={styles.container}>
       <div style={styles.splitRow}>
         <div style={styles.left}>
           <img src={logo_image} alt="Logo" style={styles.logo} />
-          <div>
-            <h2 style={styles.company}>{companyName}</h2>
-            <div style={styles.tagline}>{tagline}</div>
-          </div>
+          <h2 style={styles.company}>{companyName}</h2>
+          <p style={styles.tagline}>{tagline}</p>
         </div>
         <div style={styles.right}>
-          <div style={styles.qr}>
-            <QRCode value={qr_value} size={72} />
+          <div style={styles.qrWrapper}>
+            <QRCode value={qrValue} size={72} fgColor={cols.splitDark} />
           </div>
         </div>
       </div>
@@ -170,47 +129,43 @@ export function HexaSplitFront(props: FrontProps) {
   );
 }
 
-export function HexaSplitBack(props: BackProps) {
-  const { fullName, jobTitle, phone, email, location, website } = { ...defaultHexaSplitBack, ...props };
+export function HexaSplitBack({ back, options }: { back: BackProps; options: options }) {
+  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
+  const cols = { ...defaultColors, ...(options.colors || {}) };
+  const styles = createStyles(cols);
+
+  const fullName = applyValidators(back.fullName, vals.fullName);
+  const jobTitle = applyValidators(back.jobTitle, vals.jobTitle);
+  const phone = applyValidators(back.phone, vals.phone);
+  const email = applyValidators(back.email, vals.email);
+  const location = applyValidators(back.location, vals.location);
+  const website = applyValidators(back.website, vals.website);
 
   return (
     <div style={styles.container}>
       <div style={styles.splitRow}>
-        <div style={{...styles.left, minWidth:300}}>
+        <div style={{ ...styles.left, minWidth: 300 }}>
           <div style={styles.infoBlock}>
-            <div>
-              <div style={styles.name}>{fullName}</div>
-              <div style={styles.title}>{jobTitle}</div>
-            </div>
-            <div style={styles.contactItem}>
-              <span style={styles.icon}>📞</span>
-              {phone}
-            </div>
-            <div style={styles.contactItem}>
-              <span style={styles.icon}>✉️</span>
-              {email}
-            </div>
-            <div style={styles.contactItem}>
-              <span style={styles.icon}>📍</span>
-              {location}
-            </div>
-            <div style={styles.contactItem}>
-              <span style={styles.icon}>🌐</span>
-              {website}
-            </div>
+            <h2 style={styles.name}>{fullName}</h2>
+            <div style={styles.title}>{jobTitle}</div>
+            <div style={styles.contactItem}><span style={styles.icon}>📞</span>{phone}</div>
+            <div style={styles.contactItem}><span style={styles.icon}>✉️</span>{email}</div>
+            <div style={styles.contactItem}><span style={styles.icon}>📍</span>{location}</div>
+            <div style={styles.contactItem}><span style={styles.icon}>🌐</span>{website}</div>
           </div>
         </div>
-        <div style={styles.right}>
-          {/* Optionally, you can add a QR code or a logo here for symmetry */}
-        </div>
+        <div style={styles.right}> {/* Space for symmetry or QR */} </div>
       </div>
     </div>
   );
 }
 
-const HexaSplit = {
+// Template export
+const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
+export const HexaSplit: template & { options: options } = {
   front: { component: HexaSplitFront, default: defaultHexaSplitFront },
   back: { component: HexaSplitBack, default: defaultHexaSplitBack },
+  options: defaultOptions,
 };
 
 export default HexaSplit;

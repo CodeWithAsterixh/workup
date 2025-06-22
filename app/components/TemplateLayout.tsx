@@ -10,6 +10,7 @@ import type { FormData } from "./templateForm";
 import TemplateForm from "./templateForm";
 import { Button } from "./ui/button";
 import {splitCamelCase} from "~/lib/splitCamelCase"
+import Options, { type options } from "./Options";
 
 type Props = {
   template: template;
@@ -26,6 +27,7 @@ export default function TemplateLayout({ template, templateId }: Props) {
         ...template["back"].default,
       }
     : {};
+    const [options, setOptions] = useState<options>(template?template.options:{})
   const form = useForm<FormData>({
     defaultValues: defaultValues,
   });
@@ -125,6 +127,7 @@ export default function TemplateLayout({ template, templateId }: Props) {
                 data={formValues} // Use combined form values
                 template={template}
                 position={selectedSlide}
+                options={options}
               />
             </main>
           </PreviewCard>
@@ -148,7 +151,12 @@ export default function TemplateLayout({ template, templateId }: Props) {
           </div>
         </article>
       </section>
-      <nav className="template-edit-slide">
+      <div className="w-full flex gap-4 items-center justify-center pointer-events-none *:pointer-events-auto sticky bottom-5">
+        <Options options={options} onSave={(d)=>{
+          setProcess("updating")
+          setOptions(d)
+        }}/>
+        <nav className="template-edit-slide">
         <button
           onClick={() => handleSlide("back")}
           className={`${
@@ -166,6 +174,7 @@ export default function TemplateLayout({ template, templateId }: Props) {
           Front
         </button>
       </nav>
+      </div>
     </main>
   );
 }

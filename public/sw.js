@@ -1,5 +1,5 @@
 // filepath: c:\Users\Asterixh\Desktop\workup\public\sw.js
-const CACHE_NAME = 'my-site-cache-v1';
+const CACHE_NAME = 'workup-cache';
 const urlsToCache = [
   '/',
   '/app/app.css', // Example: Add your CSS files
@@ -11,7 +11,6 @@ self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
-        console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
   );

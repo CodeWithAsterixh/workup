@@ -1,5 +1,60 @@
 import React from "react";
+import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { template } from ".";
 
+
+
+
+// Colors map type: semantic names
+export type ColorsMap = Record<
+  | "backgroundPrimary"
+  | "backgroundSecondary"
+  | "textPrimary"
+  | "textSecondary"
+  | "divider",
+  string
+>;
+
+
+
+// Default validators for every field
+const defaultValidators: ValidatorsMap = {
+  companyName: {
+    maxLength: { value: 20, required: true, type: "number" },
+    isUrl: { value: false, required: false, type: "boolean" },
+  },
+  title: {
+    maxLength: { value: 30, required: true, type: "number" },
+    isUrl: { value: false, required: false, type: "boolean" },
+  },
+  socialHandle: {
+    maxLength: { value: 15, required: false, type: "number" },
+    isUrl: { value: false, required: false, type: "boolean" },
+  },
+  website: {
+    maxLength: { value: 50, required: false, type: "number" },
+    isUrl: { value: true, required: false, type: "boolean" },
+  },
+  email: {
+    maxLength: { value: 40, required: false, type: "number" },
+    isUrl: { value: false, required: false, type: "boolean" },
+  },
+  phone: {
+    maxLength: { value: 20, required: false, type: "number" },
+    isUrl: { value: false, required: false, type: "boolean" },
+  },
+};
+
+// Default semantic colors
+const defaultColors: ColorsMap = {
+  backgroundPrimary: "#2F3E35",
+  backgroundSecondary: "#C7C2B2",
+  textPrimary: "#FFFFFF",
+  textSecondary: "#2F3E35",
+  divider: "#2F3E35",
+};
+
+// Front Props
 type FrontProps = {
   companyName: string;
   title: string;
@@ -9,11 +64,13 @@ type FrontProps = {
   phone: string;
 };
 
+// Back Props
 type BackProps = {
   companyName: string;
   title: string;
 };
 
+// Default front/back
 export const defaultVisionaryFront: FrontProps = {
   companyName: "VISIONARY VOGUE",
   title: "TITLE",
@@ -22,153 +79,163 @@ export const defaultVisionaryFront: FrontProps = {
   email: "mywork@gmail.com",
   phone: "123-456-789",
 };
-
 export const defaultVisionaryBack: BackProps = {
   companyName: "VISIONARY VOGUE",
   title: "TITLE",
 };
 
-const frontStyles: { [key: string]: React.CSSProperties } = {
-  container: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    fontFamily: 'serif',
-  },
-  topPanel: {
-    backgroundColor: '#2F3E35',
-    flex: 2,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#FFFFFF',
-    position: 'relative',
-    padding: '16px',
-  },
-  bottomPanel: {
-    backgroundColor: '#C7C2B2',
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '5px 16px 10px 16px',
-    fontSize: '10px',
-    color: '#2F3E35',
-    position:"relative"
-  },
-  divider: {
-    width: '1px',
-    height: '24px',
-    backgroundColor: '#2F3E35',
-    margin: '0 8px'
-  },
-  socialGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
-  infoGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
+// Helper: apply truncation based on validators
+const applyValidators = (
+  value: string,
+  rules: Record<keyof Validator, ValidatorRule>
+) => {
+  const maxLen = rules.maxLength.value as number;
+  return value.slice(0, maxLen);
 };
 
+// Front component
 export function VisionaryVogueFront({
-  companyName,
-  title,
-  socialHandle,
-  website,
-  email,
-  phone,
-}: FrontProps) {
-  const props = { ...defaultVisionaryFront, companyName, title, socialHandle, website, email, phone };
+  front,
+  options,
+}: {
+  front: FrontProps;
+  options: options;
+}) {
+  const vals = { ...defaultValidators, ...(options.validators || {}) };
+  const cols = { ...defaultColors, ...(options.colors || {}) };
+
+  // Apply validation to every text field
+  const companyName = applyValidators(front.companyName, vals.companyName);
+  const title = applyValidators(front.title, vals.title);
+  const socialHandle = applyValidators(front.socialHandle, vals.socialHandle);
+  const website = applyValidators(front.website, vals.website);
+  const email = applyValidators(front.email, vals.email);
+  const phone = applyValidators(front.phone, vals.phone);
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      fontFamily: "serif",
+      backgroundColor: cols.backgroundPrimary,
+    },
+    topPanel: {
+      flex: 2,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      color: cols.textPrimary,
+      padding: "16px",
+    },
+    bottomPanel: {
+      flex: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "5px 16px 10px 16px",
+      fontSize: "10px",
+      color: cols.textSecondary,
+      backgroundColor: cols.backgroundSecondary,
+    },
+    divider: {
+      width: "1px",
+      height: "24px",
+      backgroundColor: cols.divider,
+      margin: "0 8px",
+    },
+    socialGroup: { display: "flex", alignItems: "center", gap: "8px" },
+    infoGroup: { display: "flex", flexDirection: "column", gap: "2px" },
+  };
+
   return (
-    <div style={frontStyles.container}>
-      <div style={frontStyles.topPanel}>
-        <h1 style={{ margin: 0, fontSize: '20px' }}>{props.companyName}</h1>
-        <p style={{ margin: 0, fontSize: '12px' }}>{props.title}</p>
+    <div style={styles.container}>
+      <div style={styles.topPanel}>
+        <h1 style={{ margin: 0, fontSize: "20px" }}>{companyName}</h1>
+        <p style={{ margin: 0, fontSize: "12px" }}>{title}</p>
       </div>
-      <div style={frontStyles.bottomPanel}>
-        <div style={frontStyles.socialGroup}>
+      <div style={styles.bottomPanel}>
+        <div style={styles.socialGroup}>
           <span>📌</span>
           <span>💬</span>
           <span>📷</span>
           <span>🌐</span>
-          <span>{props.socialHandle}</span>
+          <span>{socialHandle}</span>
         </div>
-        <div style={frontStyles.divider}></div>
-        <div style={frontStyles.infoGroup}>
-          <span>{props.website}</span>
-          <span>{props.email}</span>
-          <span>{props.phone}</span>
+        <div style={styles.divider}></div>
+        <div style={styles.infoGroup}>
+          <span>{website}</span>
+          <span>{email}</span>
+          <span>{phone}</span>
         </div>
       </div>
     </div>
   );
 }
 
-const backStyles: { [key: string]: React.CSSProperties } = {
-  container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#2F3E35',
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    fontFamily: 'serif',
-  },
-  watermark: {
-    position: 'absolute',
-    fontSize: '120px',
-    color: 'rgba(255,255,255,0.1)',
-  },
-  textGroup: {
-    position: 'relative',
-    textAlign: 'center',
-    color: '#FFFFFF',
-  },
-  companyName: {
-    margin: 0,
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  title: {
-    margin: 0,
-    fontSize: '10px',
-    fontStyle: 'italic',
-  },
-};
+// Back component
+export function VisionaryVogueBack({
+  back,
+  options,
+}: {
+  back: BackProps;
+  options: options;
+}) {
+  const vals = { ...defaultValidators, ...(options.validators || {}) };
+  const cols = { ...defaultColors, ...(options.colors || {}) };
 
-export function VisionaryVogueBack({ companyName, title }: BackProps) {
-  const props = { ...defaultVisionaryBack, companyName, title };
-  // take first letter as watermark
-  const initial = props.companyName.charAt(0).toUpperCase();
+  const companyName = applyValidators(back.companyName, vals.companyName);
+  const title = applyValidators(back.title, vals.title);
+  const initial = companyName.charAt(0).toUpperCase();
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      width: "100%",
+      height: "100%",
+      position: "relative",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
+      fontFamily: "serif",
+      backgroundColor: cols.backgroundPrimary,
+    },
+    watermark: {
+      position: "absolute",
+      fontSize: "120px",
+      color: "rgba(255,255,255,0.1)",
+    },
+    textGroup: {
+      position: "relative",
+      textAlign: "center",
+      color: cols.textPrimary,
+    },
+    companyName: { margin: 0, fontSize: "18px", fontWeight: "bold" },
+    title: { margin: 0, fontSize: "10px", fontStyle: "italic" },
+  };
+
   return (
-    <div style={backStyles.container}>
-      <div style={backStyles.watermark}>{initial}</div>
-      <div style={backStyles.textGroup}>
-        <h1 style={backStyles.companyName}>{props.companyName}</h1>
-        <p style={backStyles.title}>{props.title}</p>
+    <div style={styles.container}>
+      <div style={styles.watermark}>{initial}</div>
+      <div style={styles.textGroup}>
+        <h1 style={styles.companyName}>{companyName}</h1>
+        <p style={styles.title}>{title}</p>
       </div>
     </div>
   );
 }
 
-const VisionaryVogue = {
-  front: {
-    component: VisionaryVogueFront,
-    default: defaultVisionaryFront,
-  },
-  back: {
-    component: VisionaryVogueBack,
-    default: defaultVisionaryBack,
-  },
+// Template export
+const defaultOptions: options = {
+  validators: defaultValidators,
+  colors: defaultColors,
 };
-
+export const VisionaryVogue: template & { options: options } = {
+  front: { component: VisionaryVogueFront, default: defaultVisionaryFront },
+  back: { component: VisionaryVogueBack, default: defaultVisionaryBack },
+  options: defaultOptions,
+};
 export default VisionaryVogue;
