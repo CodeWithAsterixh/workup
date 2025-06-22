@@ -1,7 +1,7 @@
 "use client"
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollTrigger } from "gsap/all";
 
 // if is client-side, register ScrollTrigger plugin
 if (typeof window !== "undefined") {
