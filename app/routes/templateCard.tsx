@@ -5,12 +5,7 @@ import TemplateLayout from "~/components/TemplateLayout";
 import Loading from "~/components/loading";
 import type { Route } from "./+types/templateCard";
 
-export function meta({params}: Route.MetaArgs) {
-  return [
-    { title: `${typeof params.id === "string"?params.id:""} | Workup` },
-    { name: "description", content: `Use the ${typeof params.id === "string"?params.id:""} template for your business` },
-  ];
-}
+
 export default function Template({ params }: Route.ComponentProps) {
   const template = templates[params.id];
 
@@ -30,7 +25,12 @@ export default function Template({ params }: Route.ComponentProps) {
   }
 
   return (
-    typeof params.id === "string" &&
+    <>{
+      typeof params.id === "string" &&
     template && <TemplateLayout template={template} templateId={params.id} />
+    }
+    <title>{`${typeof params.id === "string"?params.id:""} | Workup`}</title>
+    <meta name="description" content={`Use the ${typeof params.id === "string"?params.id:""} template for your business`}/>
+    </>
   );
 }

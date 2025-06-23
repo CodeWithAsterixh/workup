@@ -107,14 +107,14 @@ const createStyles = (cols: ColorsMap): Styles => ({
   logo:           { width: 48, height: 48, objectFit: 'contain', display: 'block', margin: '10px auto 16px', zIndex: 10 } as React.CSSProperties,
   brand:          { fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: cols.textFront, position: 'relative', zIndex: 10, margin: 0 } as React.CSSProperties,
   tagline:        { fontSize: 10, textAlign: 'center', color: cols.textFront, position: 'relative', zIndex: 10, margin: 0 } as React.CSSProperties,
-  qrWrapper:      { background: cols.backgroundFront, padding: 8, borderRadius: 8, boxShadow: '0 1px 4px rgba(0,0,0,0.06)', margin: '16px auto', position: 'relative', zIndex: 10 } as React.CSSProperties,
+  qrWrapper:      {borderRadius:12, background: cols.backgroundFront, padding: 8, width:"100%", display:"flex", justifyContent:"center", boxShadow: '0 1px 4px rgba(0,0,0,0.06)', margin: '16px auto', position: 'relative', zIndex: 10 } as React.CSSProperties,
   backContainer: { width: '100%', height: '100%', position: 'relative', fontFamily: 'sans-serif', overflow: 'hidden', borderRadius: 12, background: cols.backgroundBack, color: cols.textBack, boxSizing: 'border-box', padding: 16 } as React.CSSProperties,
-  panel:          { width: '40%', height: '100%', background: cols.panelBack, position: 'absolute', top: 0, left: 0, borderTopLeftRadius: 12, borderBottomLeftRadius: 12 } as React.CSSProperties,
+  panel:          { width: '60%', height: '100%', background: cols.panelBack, position: 'absolute', top: 0, left: 0, borderRadius: '0% 100% 40% 0% / 100% 100% 40% 0%' } as React.CSSProperties,
   infoColumn:     { display: 'flex', flexDirection: 'column', gap: 8, color: cols.textBack, padding: '16px 32px', position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, borderRadius: '0% 100% 40% 0% / 100% 100% 40% 0%' } as React.CSSProperties,
   infoItem:      { display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, wordBreak: 'break-all' } as React.CSSProperties,
   icon:          { width: 12, height: 12 } as React.CSSProperties,
   name:          { fontSize: 18, fontWeight: 'bold', margin: 0, color: cols.textBack } as React.CSSProperties,
-  title:         { fontSize: 12, margin: 0, color: cols.accentBack } as React.CSSProperties,
+  title:         { fontSize: 12, margin: 0, color: cols.textBack } as React.CSSProperties,
 });
 
 export function GoldWaveFront({ front, options }: { front: FrontProps; options: options }) {
@@ -134,7 +134,7 @@ export function GoldWaveFront({ front, options }: { front: FrontProps; options: 
       <h1 style={styles.brand}>{brandName}</h1>
       <p style={styles.tagline}>{tagline}</p>
       <div style={styles.qrWrapper}>
-        <QRCode value={qrValue} size={72} fgColor={cols.backgroundFront} />
+        <QRCode value={qrValue} size={50} fgColor={cols.backgroundFront} />
       </div>
     </div>
   );

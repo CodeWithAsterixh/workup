@@ -9,8 +9,10 @@ export type ColorsMap = Record<
   | "backgroundSecondary"
   | "textPrimary"
   | "textSecondary"
-  | "accent"
-  | "divider",
+  | "divider"
+  | "color1"
+  | "color2"
+  | "color3",
   string
 >;
 
@@ -49,8 +51,10 @@ const defaultColors: ColorsMap = {
   backgroundSecondary: "#F3F4F6",
   textPrimary:         "#1F2937",
   textSecondary:       "#4B5563",
-  accent:              "#10B981",
   divider:             "#E5E7EB",
+  color1:              "#10B981",
+  color2:              "#F59E0B",
+  color3:              "#1E40AF",
 };
 
 // Props
@@ -127,7 +131,7 @@ const createStyles = (
     logoImage:   { width: '60px', height: '60px', objectFit: 'contain' },
     tagline:     { fontSize: '8px', color: cols.textSecondary, marginTop: '4px', maxWidth: '150px' },
     squaresTopRight: { position: 'absolute', top: '16px', right: '16px', display: 'flex', gap: '4px' },
-    squaresBottomLeft: { position: 'absolute', bottom: '16px', left: '16px', display: 'flex', gap: '4px' },
+    squaresBottomLeft: { position: 'absolute', bottom: '16px', left: '16px', display: 'flex', gap: '4px', alignItems:"flex-end" },
     QRWrapper:   { position: 'absolute', bottom: '16px', right: '16px' },
     squareStyle,
   };
@@ -152,7 +156,7 @@ export function SkylineModernFront({ front, options }: { front: FrontProps; opti
   return (
     <div style={styles.container}>
       <div style={styles.squaresTopRight}>
-        {[8,12,16].map((size,i) => <div key={i} style={styles.squareStyle(size, cols.accent)}></div>)}
+        {[8,12,16].map((size,i,arr) => <div key={i} style={styles.squareStyle(size, cols[(`color${arr.length-i}` as keyof typeof cols)])}></div>)}
       </div>
       <div style={styles.nameBlock}>
         <h1 style={styles.fullName}>{fullName}</h1>
@@ -166,14 +170,14 @@ export function SkylineModernFront({ front, options }: { front: FrontProps; opti
       </div>
       <div style={styles.logoArea}>
         <img src={logo_image} alt="Logo" style={styles.logoImage} />
-        <p style={styles.tagline}>{tagline}</p>
+        <p style={styles.tagline}>{tagline.slice(0, 100)}</p>
+
+      
       </div>
       <div style={styles.squaresBottomLeft}>
-        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols.accent)}></div>)}
+        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
       </div>
-      <div style={styles.QRWrapper}>
-        <QRCode value={website} size={64} fgColor={cols.textPrimary} />
-      </div>
+      
     </div>
   );
 }
@@ -195,7 +199,7 @@ export function SkylineModernBack({ back, options }: { back: BackProps; options:
   return (
     <div style={{ ...styles.container, overflow: 'hidden' }}>
       <div style={styles.squaresTopLeft}>
-        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols.accent)}></div>)}
+        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
       </div>
       <div style={styles.logoArea}>
         <img src={logo_image} alt="Logo" style={styles.logoImage} />

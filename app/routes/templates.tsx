@@ -7,18 +7,9 @@ import type { Route } from "./+types/templates";
 import { Button } from "~/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export function meta({ params }: Route.MetaArgs) {
-  return [
-    { title: `Templates | Workup` },
-    {
-      name: "description",
-      content: `Find the best template for your business`,
-    },
-  ];
-}
-type Props = {};
 
-export default function Templates({}: Props) {
+
+export default function Templates() {
   return (
     <main className="templates-page">
       <div className="w-full py-5 flex items-center justify-between px-4 sm:px-0 sm:justify-start sticky top-0 lg:top-16 bg-white z-50">
@@ -51,6 +42,10 @@ export default function Templates({}: Props) {
           </Link>
         ))}
       </div>
+          <title>Templates | Workup</title>
+    <meta name="description" content={`Find the best template for your business`}/>
     </main>
   );
 }
+
+
