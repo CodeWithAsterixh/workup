@@ -1,0 +1,72 @@
+.template-area{
+    @apply w-full h-fit sm:h-screen relative flex flex-col gap-4 py-5 items-center;
+}
+
+/* navigator to show which slide is being edited */
+.template-area .template-edit-slide{
+    @apply shadow-lg shadow-primary/20 w-fit rounded-full p-2 flex gap-3 bg-primary/20 backdrop-blur-lg;
+}
+.template-area .template-edit-slide>*{
+    @apply px-10 py-2 rounded-full cursor-pointer duration-500;
+}
+.template-area .template-edit-slide .template-edit-slide-selected{
+    @apply bg-primary text-secondary;
+}
+
+/* content edited */
+.template-area .template-content{
+    @apply w-full mb-5 sm:mb-0 h-fit sm:h-[calc(100%-10rem)] p-2 flex flex-col-reverse items-center sm:grid sm:grid-cols-2 gap-2 sm:gap-4 max-w-5xl relative;
+}
+.template-area .template-content>*{
+    @apply border w-full sm:h-full shrink-0;
+}
+.template-area .template-content .content-display {
+    @apply bg-primary/20 rounded-lg flex flex-col items-center sm:justify-center px-2 relative py-4 sm:py-10;
+}
+.template-area .template-content .content-display header{
+    @apply w-full p-2 flex flex-col items-center gap-4;
+}
+.template-area .template-content .content-display header strong{
+    @apply text-xl text-primary;
+}
+.template-area .template-content .content-display header em{
+    @apply text-base font-bold not-italic underline capitalize text-primary/40;
+}
+.preview{
+    @apply w-[400px] h-[200px] border-none bg-transparent;
+}
+ .previewImage{
+    @apply aspect-video object-contain rounded-lg duration-200;
+}
+ .previewImage{
+ filter: blur(0px) brightness(1) drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.5));
+}
+ .previewImage.loading{
+    filter: blur(5px) brightness(0.2) drop-shadow(0px 0px 0px rgba(0, 0, 0, 0.5));
+   }
+ .previewImage:hover{
+    @apply scale-[1.025];
+}
+.template-area .template-content .content-display .preview-actions {
+    @apply flex gap-2 mt-4 justify-center;
+}
+
+.template-area .template-content .content-display .preview-actions button {
+    @apply flex items-center gap-2 transition-all duration-200;
+}
+
+.template-area .template-content .content-display .preview-actions button:hover {
+    @apply bg-primary text-white;
+}
+
+.template-area .template-content .content-form {
+    @apply border-primary/20 h-fit sm:!h-full rounded-lg sm:overflow-y-auto py-5;
+}
+
+.template-area .template-content .content-form::-webkit-scrollbar{
+    @apply w-2 h-2 rounded-full bg-transparent;
+}
+.template-area .template-content .content-form::-webkit-scrollbar-thumb{
+    @apply rounded-full bg-primary/20;
+}
+

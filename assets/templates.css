@@ -1,0 +1,28 @@
+.templates-page {
+  @apply container mx-auto py-8;
+}
+
+.templates-page> h1 {
+  @apply text-2xl font-bold mb-4 px-4;
+}
+
+.templates-grid {
+  @apply px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.template-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
+  @apply transition-transform transform hover:scale-105;
+}
+
+.template-card> h2 {
+  @apply text-lg font-semibold p-3 bg-[#f3f4f6];
+}
+
+.template-card> .template-preview {
+  @apply p-4;
+  @apply flex items-center relative justify-center h-52 bg-[#e5e7eb] text-[#4a5565]; /* Example styling */
+}
+.template-card > .template-preview .previewImage{
+    @apply !size-full object-contain object-center;
+}

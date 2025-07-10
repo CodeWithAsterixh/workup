@@ -1,0 +1,92 @@
+/* Container: full width, responsive max width, padding, dark bg */
+.color-picker-container {
+  @apply  sm:max-w-sm md:max-w-md p-2 rounded-lg bg-zinc-900 box-border;
+}
+
+/* Main color square: responsive height/width, rounded, no overflow */
+#rbgcp-square-canvas-wrapper-dark {
+  @apply rounded-md overflow-hidden w-full h-40 sm:h-44 md:h-48;
+}
+
+/* Controls row: flex, wrap, spacing, responsive height */
+#rbgcp-controls-wrapper-dark {
+  @apply w-full flex flex-wrap items-center justify-between gap-2 h-7 sm:h-8;
+}
+
+/* Button group: flex, wrap, spacing */
+#rbgcp-color-type-btns-dark {
+  @apply flex items-center h-7 sm:h-8 bg-zinc-800 rounded-md px-1 justify-center relative gap-1;
+}
+
+/* Buttons: responsive font/height, rounded, transition */
+#rbgcp-solid-btn-dark,
+#rbgcp-gradient-btn-dark,
+#rbgcp-linear-btn-dark,
+#rbgcp-radial-btn-dark {
+  @apply px-2 text-xs sm:text-sm rounded font-bold h-6 sm:h-7 flex items-center justify-center transition-all;
+}
+
+/* Advanced controls: responsive, column, spacing */
+#rbgcp-advanced-controls-inner-dark {
+  @apply flex flex-col justify-between w-full pt-2 gap-2;
+}
+
+/* Advanced bars: responsive, rounded, spacing */
+
+
+/* Gradient bar: responsive, rounded, margin */
+#rbgcp-gradient-bar-canvas-dark {
+  @apply w-full h-3 rounded-lg my-2;
+}
+
+/* Handles: responsive size, shadow, rounded */
+[id$="-handle-dark"] {
+  @apply absolute border-2 border-white rounded-full shadow-md w-4 h-4 z-10 transition-all;
+}
+
+/* Inputs row: flex, wrap, gap, responsive */
+#rbgcp-inputs-wrap-dark {
+  @apply flex flex-wrap justify-between gap-1 pt-3;
+}
+#rbgcp-hex-input-wrapper-dark,
+#rbgcp-R-input-wrapper-dark,
+#rbgcp-G-input-wrapper-dark,
+#rbgcp-B-input-wrapper-dark,
+#rbgcp-A-input-wrapper-dark {
+  @apply flex-shrink w-1/5 min-w-[60px];
+}
+#rbgcp-hex-input-wrapper-dark {
+  @apply w-20 min-w-[76px];
+}
+
+/* Inputs: responsive, rounded, bg, text */
+#rbgcp-hex-input-dark,
+#rbgcp-R-input-dark,
+#rbgcp-G-input-dark,
+#rbgcp-B-input-dark,
+#rbgcp-A-input-dark {
+  @apply h-8 sm:h-9 rounded-md border-none w-full px-1 outline-none text-white font-normal text-center bg-zinc-800 text-base;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 400px) {
+  .color-picker-container {
+    @apply max-w-full p-1;
+  }
+  #rbgcp-square-canvas-wrapper-dark {
+    @apply h-32;
+  }
+  #rbgcp-controls-wrapper-dark {
+    @apply h-6;
+  }
+  #rbgcp-inputs-wrap-dark {
+    @apply gap-0;
+  }
+  #rbgcp-hex-input-wrapper-dark,
+  #rbgcp-R-input-wrapper-dark,
+  #rbgcp-G-input-wrapper-dark,
+  #rbgcp-B-input-wrapper-dark,
+  #rbgcp-A-input-wrapper-dark {
+    @apply min-w-[40px] w-1/6;
+  }
+}
