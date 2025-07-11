@@ -4,12 +4,22 @@ import handleEdit from "@/components/Creative/lib/editor-functions/handleEdit";
 import getValueFromSelectedFaceConfig, {
   getValueFromSelectedElements,
 } from "@/components/Creative/lib/getValueFromSelected";
+import { Button } from "@/components/ui/button";
+import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import LabelInput from "@/components/ui/labelInput";
 import { Switch } from "@/components/ui/switch";
 import { useEditorStore } from "@/store/Editor";
+import { Size, SizeMode } from "@/store/Editor/types";
+import { ChevronDownIcon } from "lucide-react";
 import { InputTitles, SectionTitle } from ".";
 
+const sizes:SizeMode[] = ["fill-container","hug-content"] 
 export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
   const { faceConfig, currentFace, elements, selectedIds } = useEditorStore();
   const clipContent =
@@ -120,7 +130,7 @@ export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
       });
     }
   };
-  const handleWidth = (value: number) => {
+  const handleWidth = (value: Size["width"]) => {
     if (tab === "face") {
       handleEdit.handleUpdateFace({
         param: "width",
@@ -133,7 +143,7 @@ export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
       });
     }
   };
-  const handleHeight = (value: number) => {
+  const handleHeight = (value: Size["height"]) => {
     if (tab === "face") {
       handleEdit.handleUpdateFace({
         param: "height",
@@ -166,6 +176,7 @@ export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
       });
     }
   };
+
   return (
     <div className="w-full flex flex-col gap-4">
       <SectionTitle title="Layout" />
@@ -224,12 +235,40 @@ export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
                 },
               }}
               id="width"
-              type="number"
+              type={tab==="face"?"number":"text"}
               value={posWidth}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
                 handleWidth(isNaN(val) ? 0 : val);
               }}
+              rightbutton={
+                tab==="face"?null:
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      id="borderStyle"
+                      className="!p-0 !bg-transparent !h-fit"
+                    >
+                      <ChevronDownIcon className="size-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-60 p-0">
+                    <Command>
+                      <CommandGroup>
+                        {sizes.map((size) => (
+                          <CommandItem
+                            key={size}
+                            onSelect={(value) => handleWidth(value as SizeMode)}
+                          >
+                            {size}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              }
             />
             <LabelInput
               slotProps={{
@@ -239,12 +278,39 @@ export default function LayoutControls({ tab }: { tab: "face" | "element" }) {
                 },
               }}
               id="height"
-              type="number"
+              type={tab==="face"?"number":"text"}
               value={posHeight}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
                 handleHeight(isNaN(val) ? 0 : val);
               }}
+              rightbutton={tab==="face"?null:
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      id="borderStyle"
+                      className="!p-0 !bg-transparent !h-fit"
+                    >
+                      <ChevronDownIcon className="size-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-60 p-0">
+                    <Command>
+                      <CommandGroup>
+                        {sizes.map((size) => (
+                          <CommandItem
+                            key={size}
+                            onSelect={(value) => handleHeight(value as SizeMode)}
+                          >
+                            {size}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              }
             />
           </div>
         </div>

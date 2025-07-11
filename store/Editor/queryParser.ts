@@ -19,7 +19,17 @@ type ParsedAction =
     }
   | { kind: "update-face"; face: CardFace; propPath: string; rawValue: string }
   | { kind: "update-element"; id: string; propPath: string; rawValue: string }
-  | { kind: "delete-element"; id: string };
+  | { kind: "delete-element"; id: string }
+  | {
+      kind: "move-element";
+      id: string;
+      position: "first" | "last" | "next" | "previous";
+    }
+  | {
+      kind: "move-face";
+      face: CardFace;
+      position: "first" | "last" | "next" | "previous";
+    };
 
 export class ActionQueryParser {
   private insertFrameRe =
@@ -27,10 +37,12 @@ export class ActionQueryParser {
 
   // All other types are auto‐id’d by your factory
   private insertAutoRe =
-    /^INSERT in (front|back)face (rect|ellipse|line|image|text)(?: childOf:(\S+))?$/;
+    /^INSERT in (front|back)face (rect|ellipse|line|image|text|qr)(?: childOf:(\S+))?$/;
   private updateFaceRe = /^UPDATE (front|back)face with ([\w.]+):(.+)$/;
   private updateElemRe = /^UPDATE itemof id:(\S+) with ([\w.]+):(.+)$/;
   private deleteElemRe = /^DELETE itemof id:(\S+)$/;
+  private moveElemRe = /^MOVE itemof id:(\S+) to (first|last|next|previous)$/i;
+  private moveFaceRe = /^MOVE (front|back)face to (first|last|next|previous)$/i;
   private pp = /^\+\+/;
   private pn = /^\+[0-9]+/;
   private mm = /^--/;
@@ -38,6 +50,20 @@ export class ActionQueryParser {
 
   public parse(query: string): ParsedAction {
     let m: RegExpExecArray | null;
+    // REVERSE operator: negate a prior update
+    if (query.toUpperCase().startsWith("REVERSE ")) {
+      const sub = query.slice(8);
+      const parsed = this.parse(sub);
+      if (parsed.kind === "update-element" || parsed.kind === "update-face") {
+        // coerce then negate
+        const value = this.coerce(parsed.rawValue);
+        if (typeof value === "number") {
+          parsed.rawValue = (-value).toString();
+          return parsed;
+        }
+      }
+      throw new Error("Can only reverse numeric update queries");
+    }
     if ((m = this.insertAutoRe.exec(query))) {
       const [, face, elementType, childOfId] = m;
       return {
@@ -79,6 +105,21 @@ export class ActionQueryParser {
       const [, id] = m;
       return { kind: "delete-element", id };
     }
+    // move element in its face array
+    if ((m = this.moveElemRe.exec(query))) {
+      const [, id, position] = m;
+      return { kind: "move-element", id, position: position as any };
+    }
+
+    // move (set) active face
+    if ((m = this.moveFaceRe.exec(query))) {
+      const [, face, position] = m;
+      return {
+        kind: "move-face",
+        face: face as CardFace,
+        position: position as any,
+      };
+    }
     throw new Error(`Unrecognized query: "${query}"`);
   }
 
@@ -117,9 +158,9 @@ export class ActionQueryParser {
           const [item] = v;
           const itemNum = parseInt(item.split("-").join("").trim());
           ref[keys[keys.length - 1]] = itemValue - itemNum;
-        }else {
-      ref[keys[keys.length - 1]] = value;
-    }
+        } else {
+          ref[keys[keys.length - 1]] = value;
+        }
       }
     } else {
       ref[keys[keys.length - 1]] = value;
@@ -135,13 +176,13 @@ export class ActionQueryParser {
       /^INSERT in (front|back)face frame with id:(\S+)(?: childOf:(\S+))?$/;
     // 2) Regex for all other types (auto‑ID), optional childOf
     const insertAutoRe =
-      /^INSERT in (front|back)face (rect|ellipse|line|image|text)(?: childOf:(\S+))?$/;
+      /^INSERT in (front|back)face (rect|ellipse|line|image|text|qr)(?: childOf:(\S+))?$/;
 
     let m: RegExpExecArray | null;
 
     // ── FRAME INSERT ─────────────────────────────────────────────────────────
     if ((m = insertFrameRe.exec(query))) {
-      const [_, face, explicitId, childOfId] = m;
+      const [_, __, explicitId, childOfId] = m;
       // build the new frame, overriding its id
       const base = methods.addFrame();
       const newFrame: Element = { ...base, id: explicitId };
@@ -162,7 +203,7 @@ export class ActionQueryParser {
 
     // ── AUTO‑ID INSERT ────────────────────────────────────────────────────────
     if ((m = insertAutoRe.exec(query))) {
-      const [_, face, type, childOfId] = m;
+      const [_, __, type, childOfId] = m;
       // pick and await the right factory method
       let newEl: Element;
       switch (type) {
@@ -179,8 +220,13 @@ export class ActionQueryParser {
           newEl = methods.addText();
           break;
         case "line":
+          newEl = methods.addLine();
+          break;
+        case "qr":
+          newEl = methods.addQRCode();
+          break;
         default:
-          newEl = methods.addQRCode(); // or your line handler
+          newEl = methods.addQRCode();
           break;
       }
 
@@ -206,13 +252,12 @@ export class ActionQueryParser {
           getElementForFace(parsed.id, "back", store.elements)
         ) {
           store.updateElement(parsed.id, (el) => {
-            const dotNested = flattenToDotNotation<any>(el)
-            const hasItem = dotNested[parsed.propPath] !== undefined
+            const dotNested = flattenToDotNotation<any>(el);
+            const hasItem = dotNested[parsed.propPath] !== undefined;
 
-            if(hasItem){
+            if (hasItem) {
               this.applyNested(el, parsed.propPath, value, el);
             }
-            
           });
         }
         break;
@@ -233,6 +278,60 @@ export class ActionQueryParser {
           this.applyNested(prev, parsed.propPath, value, prev);
           return patch;
         });
+        break;
+      }
+      case "move-element": {
+        // determine which face contains the element
+        const face: CardFace = getElementForFace(
+          parsed.id,
+          "front",
+          store.elements
+        )
+          ? "front"
+          : "back";
+        const arr = Array.from(store.elements[face]);
+        const idx = arr.findIndex((el) => el.id === parsed.id);
+        if (idx < 0) break;
+        const [el] = arr.splice(idx, 1);
+        let newIndex: number;
+        switch (parsed.position) {
+          case "first":
+            newIndex = 0;
+            break;
+          case "last":
+            newIndex = arr.length;
+            break;
+          case "next":
+            newIndex = Math.min(idx + 1, arr.length);
+            break;
+          case "previous":
+            newIndex = Math.max(idx - 1, 0);
+            break;
+        }
+        arr.splice(newIndex, 0, el);
+        store.setElements(arr, face);
+        break;
+      }
+
+      case "move-face": {
+        const faces: CardFace[] = ["front", "back"];
+        const currentIndex = faces.indexOf(parsed.face);
+        let target: CardFace;
+        switch (parsed.position) {
+          case "first":
+            target = "front";
+            break;
+          case "last":
+            target = "back";
+            break;
+          case "next":
+            target = faces[(currentIndex + 1) % faces.length];
+            break;
+          case "previous":
+            target = faces[(currentIndex - 1 + faces.length) % faces.length];
+            break;
+        }
+        store.setActiveFace(target, []);
         break;
       }
     }

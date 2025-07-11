@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 interface KeyboardContextType {
   values: string[];
   setValues: (key:string[])=>void;
-  addValue: (val: string) => void;
-  removeValue: (val: string) => void;
+  enableDefault:boolean;
+  setEnableDefault: (val: boolean) => void
   id:string
 }
 
@@ -19,17 +19,19 @@ export const useKeyboard = () => {
 
 export const KeyboardProvider = ({ children,id }: { id:string } & Slot) => {
   const [values, setValues] = useState<string[]>([]);
+  const [enableDefault, setEnableDefault] = useState<boolean>(false);
 
-  const addValue = (val: string) => setValues((prev) => [...prev, val]);
-  const removeValue = (val: string) => setValues((prev) => prev.filter((v) => v !== val));
   const handleSetValue = (val: string[]) => {
     setValues(val)
+  };
+  const handleSetEnableDefault = (val: boolean) => {
+    setEnableDefault(val)
   };
 
 
   
   return (
-    <KeyboardContext.Provider value={{ values, setValues:handleSetValue, addValue, removeValue, id }}>
+    <KeyboardContext.Provider value={{ values, setValues:handleSetValue, id, enableDefault, setEnableDefault:handleSetEnableDefault }}>
       {children}
     </KeyboardContext.Provider>
   );

@@ -31,10 +31,7 @@ export interface BaseElement extends BaseStyle {
   rotation: number;
 }
 
-export interface Size {
-  width: number;
-  height: number;
-}
+
 
 export interface Radius {
   left: number;
@@ -45,15 +42,21 @@ export interface Radius {
 
 export interface RectElement extends BaseElement, Size {
   type: "rect";
-  radius: Radius | number;
 }
 export interface QrElement extends BaseElement, Size {
   type: "qr";
+  qrOnly:{
+    background?:string,
+    foreGround?:string,
+    value?:string
+  }
 }
+export type SizeMode = "fill-container" | "hug-content";
 
-interface FrameSize extends Size {
-  width: number | "fit-content";
-  height: number | "fit-content";
+export interface Size {
+  width: number | SizeMode;
+  height: number | SizeMode;
+  radius: Radius | number;
 }
 export interface FlexStyles extends BaseStyle {
   direction: "row" | "row-reverse" | "column" | "column-reverse";
@@ -61,7 +64,7 @@ export interface FlexStyles extends BaseStyle {
   justify: "start" | "end" | "center" | "between";
 }
 
-export interface FrameElementBase extends BaseElement, FrameSize {
+export interface FrameElementBase extends BaseElement,Size {
   type: "frame";
   children?: Element[];
   displayType: "flex" | "free";
@@ -81,7 +84,7 @@ export interface ImageElement extends RectElement {
   src: string;
 }
 
-export interface EllipseElement extends BaseElement, Size {
+export interface EllipseElement extends BaseElement, Omit<Size,"radius"> {
   type: "ellipse";
 }
 
@@ -93,7 +96,7 @@ export interface LineElement extends BaseElement {
   y2: number;
 }
 
-export interface TextElement extends BaseElement {
+export interface TextElement extends BaseElement, Size {
   type: "text";
   text: string;
   fontFamily: string;
@@ -128,10 +131,12 @@ export type actionQueriesUpdate =
       Omit<FaceConfig, "id" | "type">
     >}:${string | number | boolean}`
   | `UPDATE itemof id:${string} with ${string}:${string | number | boolean}`;
-
+export type actionQueriesPositioning =
+  | `MOVE itemof id:${string} to ${"first"|"last"|"next"|"previous"}`
+  | `MOVE ${CardFace}face to ${"first"|"last"|"next"|"previous"}`;
 export type actionQueriesDelete = `DELETE itemof id:${string}`;
 
-export type actionQueries =  actionQueriesInsert | actionQueriesUpdate | actionQueriesDelete
+export type actionQueries =  actionQueriesPositioning|actionQueriesInsert | actionQueriesUpdate | actionQueriesDelete
 
 export type tools = "select" | `add-${ElementType}` | "move";
 export interface EditorState {
@@ -178,7 +183,7 @@ export interface EditorStateActions {
   runHistory: () => void;
   handleQuery:(query:actionQueries, fromHistory?:boolean)=>void,
   setTool: (tool: tools) => void;
-  setElements: (els: Element[]) => void;
+  setElements: (els: Element[], face?:CardFace) => void;
   unSelectFaces: () => void;
   unSelectElements: () => void;
   removeElement: (id: string) => void;

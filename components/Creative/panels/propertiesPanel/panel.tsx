@@ -5,6 +5,7 @@ import BorderControls from "./controls/BorderControls";
 import LayoutControls from "./controls/LayoutControls";
 import TypographyControls from "./controls/TypographyControls";
 import { useEditorStore } from "@/store/Editor";
+import QrControls from "./controls/QrControls";
 
 export default function PropertiesPanelMain() {
   const { selectedIds, currentFace } = useEditorStore();
@@ -21,6 +22,7 @@ export default function PropertiesPanelMain() {
             <TypographyControls />
             <AppearanceControls tab="element" />
             <BorderControls tab="element" />
+            <QrControls/>
           </>
         ) : (
           <div className="w-full h-fit py-10 flex items-center justify-center">

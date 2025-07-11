@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { KeyboardProvider } from "@/store/Keyboard";
 import { Slot } from "@/types";
 import { Download, Share2 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
 import Save from "../Save";
 import CanvasPanel from "./CanvasPanel";
@@ -14,7 +14,8 @@ import LayersPanelMain from "./propertiesPanel/panel";
 import Tools from "./propertiesPanel/tools";
 
 export default function MainPanel({ children }: Slot) {
-  const designId = usePathname();
+  const designPath = usePathname();
+  const {id} = useParams() as {id:string}
   const isMobile = useIsMobile(1024);
   const [optionsSidebarOpened, setOptionsSidebarOpened] = useState(false);
 
@@ -29,9 +30,9 @@ export default function MainPanel({ children }: Slot) {
             <div className="w-fit flex items-center gap-2">
               <SidebarTrigger />
               <span className="text-sm max-w-40 md:max-w-20 lg:max-w-40 truncate">
-                {designId}
+                {designPath}
               </span>
-              <Save/>
+              <Save as={id}/>
             </div>
             <div className="w-fit flex items-center gap-2">
               <Button className="!p-1 !size-7">

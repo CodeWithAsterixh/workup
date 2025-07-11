@@ -20,12 +20,13 @@ export default function KeyboardTracker({
   as,
   asChild,
   onKeyChange,
+  preventDefault,
   ...props
 }: KeyboardTrackerProps) {
 
   const onKC = onKeyChange?onKeyChange:()=>null
   const ref=
-    useSingleKeyTracker<HTMLDivElement>(onKC);
+    useSingleKeyTracker<HTMLDivElement>(onKC,preventDefault);
 
     // useEffect(() => {
     // }, [onKC])

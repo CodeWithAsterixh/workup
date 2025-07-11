@@ -1,36 +1,29 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-import React, { forwardRef, useEffect, useRef } from "react";
 import interact from "interactjs";
+import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import {
   PassThroughElement,
   PassThroughElementProps,
 } from "../PassThroughElement";
 
 /**
- * InteractiveElement wraps any element to add drag, resize, and snap behavior via interact.js.
- * Features can be toggled via props: enableDrag, enableResize, enableSnap.
+ * InteractiveElement wraps any element to add drag, resize, and optional snap behavior via interact.js.
  */
-export type InteractiveElementProps<As extends React.ElementType> =
-  /** Omit native event props that conflict */
-  Omit<PassThroughElementProps<As>, 'onDragEnd' | 'onResizeEnd' | 'onDrag' | 'onResize'> & {
-    /** Called when interact.js drag ends */
-    onInteractDragEnd?: (val: { x: number; y: number }) => void;
-    /** Called when interact.js drag is active */
-    onInteractDragging?: (val: { x: number; y: number }) => void;
-    /** Called when interact.js resize ends */
-    onInteractResizeEnd?: (val: { w: number; h: number }) => void;
-    /** Called when interact.js resizing */
-    onInteractResizing?: (val: { w: number; h: number }) => void;
-    /** Called on each snap move */
-    onInteractSnap?: (event: Interact.InteractEvent) => void;
-    snapGrid?: { x: number; y: number };
-    snapRange?: number;
-    enableDrag?: boolean;
-    enableResize?: boolean;
-    enableSnap?: boolean;
-  };
+export type InteractiveElementProps<As extends React.ElementType> = Omit<
+  PassThroughElementProps<As>,
+  "onDragEnd" | "onResizeEnd" | "onDrag" | "onResize"
+> & {
+  onInteractDragEnd?: (position: { x: number; y: number }) => void;
+  onInteractDragging?: (position: { x: number; y: number }) => void;
+  onInteractResizeEnd?: (size: { w: number; h: number }) => void;
+  onInteractResizing?: (size: { w: number; h: number }) => void;
+  snapGrid?: { x: number; y: number };
+  snapRange?: number;
+  enableDrag?: boolean;
+  enableResize?: boolean;
+  enableSnap?: boolean;
+};
 
 const InteractiveElementInner = forwardRef(
   <As extends React.ElementType = "div">(
@@ -38,72 +31,69 @@ const InteractiveElementInner = forwardRef(
       as,
       asChild,
       children,
-      onInteractDragEnd,
-      onInteractDragging,
-      onInteractResizeEnd,
-      onInteractResizing,
-      onInteractSnap,
       snapGrid = { x: 0, y: 0 },
       snapRange = 15,
       enableDrag = true,
       enableResize = true,
       enableSnap = true,
-      ...rest
+      onInteractDragEnd,
+      onInteractDragging,
+      onInteractResizeEnd,
+      onInteractResizing,
+      ...passProps
     }: InteractiveElementProps<As>,
-    ref: React.Ref<Element>
+    forwardedRef: React.Ref<HTMLElement>
   ) => {
-    const elRef = useRef<HTMLElement | null>(null);
-    const setRef = (el: HTMLElement) => {
-      elRef.current = el;
-      if (typeof ref === "function") ref(el);
-      else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = el;
-    };
+    const elementRef = useRef<HTMLElement | null>(null);
+    const setRefs = useCallback(
+      (node: HTMLElement) => {
+        elementRef.current = node;
+        if (!forwardedRef) return;
+        if (typeof forwardedRef === "function") forwardedRef(node);
+        else
+          (forwardedRef as React.MutableRefObject<HTMLElement | null>).current =
+            node;
+      },
+      [forwardedRef]
+    );
+
+    // Compute modifiers only once per dependencies
+    const snapModifier = React.useMemo(() => {
+      if (!enableSnap) return [];
+      return [
+        interact.modifiers.snap({
+          targets: [interact.snappers.grid(snapGrid)],
+          range: snapRange,
+          relativePoints: [{ x: 0, y: 0 }],
+        }),
+      ];
+    }, [enableSnap, snapGrid, snapRange]);
 
     useEffect(() => {
-      const el = elRef.current;
-      if (!el) return;
-
-      // ensure dataset coords
-      if (!el.dataset.x) el.dataset.x = "0";
-      if (!el.dataset.y) el.dataset.y = "0";
-
-      const inst = interact(el);
+      const node = elementRef.current;
+      if (!node) return;
+      const inst = interact(node);
 
       if (enableDrag) {
         inst.draggable({
           inertia: true,
-          modifiers: enableSnap
-            ? [
-                interact.modifiers.snap({
-                  targets: [interact.snappers.grid(snapGrid)],
-                  range: snapRange,
-                  relativePoints: [{ x: 0, y: 0 }],
-                }),
-              ]
-            : [],
+          modifiers: snapModifier,
           listeners: {
-            move(event) {
+            move: (event) => {
               const target = event.target as HTMLElement;
-              const prevX = parseFloat(target.dataset.x!);
-              const prevY = parseFloat(target.dataset.y!);
-              const newX = prevX + event.dx;
-              const newY = prevY + event.dy;
-              onInteractDragging?.({ x:newX, y:newY })
-              
-              target.style.transform = `translate(${newX}px, ${newY}px)`;
-              target.dataset.x = newX.toString();
-              target.dataset.y = newY.toString();
-              if (enableSnap && event.type === "snapmove" && onInteractSnap) {
-                onInteractSnap(event as Interact.InteractEvent);
-              }
+              const x = parseFloat(target.dataset.x || "0") + event.dx;
+              const y = parseFloat(target.dataset.y || "0") + event.dy;
+              target.style.transform = `translate(${x}px, ${y}px)`;
+              target.dataset.x = x.toString();
+              target.dataset.y = y.toString();
+              onInteractDragging?.({ x, y });
             },
-            end(event) {
-              if (onInteractDragEnd) {
-                const target = event.target as HTMLElement;
-                const x = parseFloat(target.dataset.x!);
-                const y = parseFloat(target.dataset.y!);
-                onInteractDragEnd({ x, y });
-              }
+            end: (event) => {
+              const target = event.target as HTMLElement;
+              onInteractDragEnd?.({
+                x: parseFloat(target.dataset.x || "0"),
+                y: parseFloat(target.dataset.y || "0"),
+              });
             },
           },
         });
@@ -115,33 +105,36 @@ const InteractiveElementInner = forwardRef(
           inertia: true,
           modifiers: [
             interact.modifiers.restrictSize({ min: { width: 20, height: 20 } }),
-            enableSnap
-              ? interact.modifiers.snapSize({
-                  targets: [interact.snappers.grid(snapGrid)],
-                  range: snapRange,
-                })
-              : null,
-          ].filter(Boolean) as any,
+            ...(snapModifier.map(() =>
+              interact.modifiers.snapSize({
+                targets: [interact.snappers.grid(snapGrid)],
+                range: snapRange,
+              })
+            ) as any),
+          ],
           listeners: {
-            move(event) {
+            move: (event) => {
               const target = event.target as HTMLElement;
-              const prevX = parseFloat(target.dataset.x!);
-              const prevY = parseFloat(target.dataset.y!);
+              const x =
+                parseFloat(target.dataset.x || "0") + event.deltaRect.left;
+              const y =
+                parseFloat(target.dataset.y || "0") + event.deltaRect.top;
               const { width, height } = event.rect;
               target.style.width = `${width}px`;
               target.style.height = `${height}px`;
-              onInteractResizing?.({w:width, h:height});
-              const newX = prevX + event.deltaRect.left;
-              const newY = prevY + event.deltaRect.top;
-              target.style.transform = `translate(${newX}px, ${newY}px)`;
-              target.dataset.x = newX.toString();
-              target.dataset.y = newY.toString();
+              target.style.transform = `translate(${x}px, ${y}px)`;
+              target.dataset.x = x.toString();
+              target.dataset.y = y.toString();
+              onInteractResizing?.({ w: width, h: height });
             },
-            end(event) {
-              const { width, height } = event.rect;
-              onInteractResizeEnd?.({w:width, h:height});
+            end: (event) => {
+              onInteractResizeEnd?.({
+                w: event.rect.width,
+                h: event.rect.height,
+              });
             },
           },
+          margin: 2,
         });
       }
 
@@ -149,16 +142,20 @@ const InteractiveElementInner = forwardRef(
     }, [
       enableDrag,
       enableResize,
-      enableSnap,
       onInteractDragEnd,
+      onInteractDragging,
       onInteractResizeEnd,
-      onInteractSnap,
-      snapGrid,
-      snapRange,
+      onInteractResizing,
+      snapModifier,
     ]);
 
     return (
-      <PassThroughElement as={as} asChild={asChild} ref={setRef}  {...(rest as any)}>
+      <PassThroughElement
+        as={as}
+        asChild={asChild}
+        ref={setRefs}
+        {...(passProps as PassThroughElementProps<As>)}
+      >
         {children}
       </PassThroughElement>
     );
@@ -167,7 +164,8 @@ const InteractiveElementInner = forwardRef(
 
 InteractiveElementInner.displayName = "InteractiveElement";
 
-export const InteractiveElement = InteractiveElementInner as
-  <As extends React.ElementType = "div">(
-    props: InteractiveElementProps<As> & { ref?: React.Ref<Element> }
-  ) => React.ReactElement | null;
+export const InteractiveElement = InteractiveElementInner as <
+  As extends React.ElementType = "div"
+>(
+  props: InteractiveElementProps<As> & { ref?: React.Ref<HTMLElement> }
+) => React.ReactElement | null;

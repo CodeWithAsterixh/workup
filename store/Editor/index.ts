@@ -293,8 +293,8 @@ export const useEditorStore = create<EditorState & EditorStateActions>(
     },
 
     setTool: (tool) => set({ tool }),
-    setElements: (els) => {
-      const face = get().currentFace as CardFace;
+    setElements: (els,manualFace) => {
+      const face = manualFace?manualFace:get().currentFace as CardFace;
       set(
         produce<EditorState>((state) => {
           state.elements[face] = els;

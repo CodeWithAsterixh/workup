@@ -7,7 +7,7 @@ import LabelInput from "@/components/ui/labelInput";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEditorStore } from "@/store/Editor";
 import { Radius } from "lucide-react";
-import { SectionTitle } from ".";
+import { InputTitles, SectionTitle } from ".";
 
 export default function AppearanceControls({
   tab,
@@ -105,10 +105,7 @@ export default function AppearanceControls({
       {/* Section Title */}
       <SectionTitle title="Appearance" />
       <div className="w-full flex flex-col gap-2">
-        <ul className="w-full grid grid-cols-[repeat(auto-fit,_minmax(5rem,_1fr))] gap-2 font-semibold text-xs text-zinc-500 tracking-widest uppercase">
-          <li>Opacity</li>
-          <li>Radius</li>
-        </ul>
+        <InputTitles titles={["Opacity", "Radius"]}/>
         <div className="w-full grid grid-cols-[repeat(auto-fit,_minmax(5rem,_1fr))] gap-2">
           <LabelInput
             slotProps={{
@@ -156,9 +153,9 @@ export default function AppearanceControls({
         </div>
       </div>
       <div className="w-full flex flex-col gap-2">
-        <ul className="w-full grid grid-cols-[repeat(auto-fit,_minmax(5rem,_1fr))] gap-2 font-semibold text-xs text-zinc-500 tracking-widest uppercase">
-          <li>Fill</li>
-        </ul>
+        
+        <InputTitles titles={["Fill"]}/>
+
         <div className="w-full grid grid-cols-[repeat(auto-fit,_minmax(5rem,_1fr))] gap-2">
           <ColorPicker
             side={isMobile ? "top" : "left"}

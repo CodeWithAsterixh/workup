@@ -1,5 +1,6 @@
 import { convertTob64 } from "@/components/Creative/lib/convertTob64";
-import { EditorState, EditorStateActions, Element } from "@/store/Editor/types";
+import { EditorState, EditorStateActions, Element, QrElement } from "@/store/Editor/types";
+import { createDefaultLineElement } from "./createLineElement";
 
 /**
  * Factory that returns an object of methods to add each element type.
@@ -40,6 +41,7 @@ export function createAddMethods(
       width: 100,
       height: 100,
       style: { fill: '#fff', opacity: 1, stroke: { color: '#000', type: 'solid', width: 1 } },
+      
     }),
 
     /** Add an image via file picker, returns the new Element */
@@ -82,17 +84,22 @@ export function createAddMethods(
     },
 
     /** Add a QR code placeholder (text element) */
-    addQRCode: (): Element => ({
-      type: 'text',
-      id: getNextId('text'),
+    addQRCode: (): QrElement => ({
+      type: 'qr',
+      id: getNextId('qr'),
       x: 0,
       y: 0,
       rotation: 0,
       style: { fill: '#000', opacity: 1, stroke: { color: '#000', type: 'solid', width: 1 } },
-      text: '',
-      fontFamily: 'Arial',
-      fontSize: 14,
-      fontWeight: '400',
+      width: 100,
+      height: 100,
+      radius:0,
+      qrOnly:{
+        background:"rgba(255, 255, 255, 0)",
+        foreGround:"#000",
+        value:"" 
+      }
+
     }),
 
     /** Add a frame container */
@@ -109,6 +116,8 @@ export function createAddMethods(
       gap: 0,
       children: [],
       clipContent: false,
+      radius:0
+
     }),
 
     /** Add a text element */
@@ -123,6 +132,10 @@ export function createAddMethods(
       fontFamily: 'Arial, sans-serif',
       fontSize: 14,
       fontWeight: '400',
+      width: "hug-content",
+      height: "hug-content",
+      radius:0
     }),
+    addLine: ():Element => (createDefaultLineElement(50, 100, 200, 150,getNextId('text')))
   };
 }
