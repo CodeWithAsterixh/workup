@@ -29,6 +29,11 @@ type ParsedAction =
       kind: "move-face";
       face: CardFace;
       position: "first" | "last" | "next" | "previous";
+    }
+    | {
+      kind: "update-others";
+      propPath: string;
+      rawValue: string
     };
 
 export class ActionQueryParser {
@@ -40,7 +45,9 @@ export class ActionQueryParser {
     /^INSERT in (front|back)face (rect|ellipse|line|image|text|qr)(?: childOf:(\S+))?$/;
   private updateFaceRe = /^UPDATE (front|back)face with ([\w.]+):(.+)$/;
   private updateElemRe = /^UPDATE itemof id:(\S+) with ([\w.]+):(.+)$/;
+  private updateOthers = /^UPDATE ([\w.]+):(.*)$/;
   private deleteElemRe = /^DELETE itemof id:(\S+)$/;
+  
   private moveElemRe = /^MOVE itemof id:(\S+) to (first|last|next|previous)$/i;
   private moveFaceRe = /^MOVE (front|back)face to (first|last|next|previous)$/i;
   private pp = /^\+\+/;
@@ -64,7 +71,15 @@ export class ActionQueryParser {
       }
       throw new Error("Can only reverse numeric update queries");
     }
-    if ((m = this.insertAutoRe.exec(query))) {
+    if ((m = this.updateOthers.exec(query))) {
+      const [, propPath, rawValue] = m;
+      return {
+        kind: "update-others",
+        propPath,
+        rawValue
+      };
+    }
+    if ((m = this.insertAutoRe.exec(query))){
       const [, face, elementType, childOfId] = m;
       return {
         kind: "insert",
@@ -120,6 +135,7 @@ export class ActionQueryParser {
         position: position as any,
       };
     }
+    console.log(this.updateOthers.exec(query),query)
     throw new Error(`Unrecognized query: "${query}"`);
   }
 
@@ -260,6 +276,12 @@ export class ActionQueryParser {
             }
           });
         }
+        break;
+      }
+      case "update-others":{
+        const value = this.coerce(parsed.rawValue);
+        const store = useEditorStore.getState()
+        this.applyNested(store, parsed.propPath, value, store);
         break;
       }
       case "delete-element": {

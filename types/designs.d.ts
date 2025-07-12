@@ -12,4 +12,5 @@ export interface designCard {
         front:designCardConfig;
         back:designCardConfig;
     }
+    updatedAt?:string;
 }

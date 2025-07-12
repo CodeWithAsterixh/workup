@@ -1,34 +1,31 @@
 "use client";
 
 import { useDebouncedEffect } from "@/hooks/useDebouncedEffects";
+import { loadAll, persistAll } from "@/lib/localStorageDesigns";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/Editor";
 import { designCard } from "@/types/designs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // localStorage key
 const STORAGE_KEY = "designCards";
 
 export default function Save({ as }: { as: string }) {
-  const { history, elements, faceConfig, populate } = useEditorStore();
-  const [saved, setSaved] = useState(false);
+  const {
+    history,
+    elements,
+    faceConfig,
+    populate,
+    name,
+    setCustom,
+  } = useEditorStore();
+  const [saved, setSaved] = useState(true);
 
   // Helper to load+parse or return empty array
-  const loadAll = (): designCard[] => {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    } catch {
-      return [];
-    }
-  };
-
-  // Write back to localStorage
-  const persistAll = (cards: designCard[]) =>
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
 
   useDebouncedEffect(
     () => {
-      if (!history.present) return;
+      if (saved) return;
       // Build the new/updated card
       const timestamp = new Date().toISOString();
       const newCard: designCard = {
@@ -45,21 +42,37 @@ export default function Save({ as }: { as: string }) {
             elements: elements.back,
           },
         },
+        updatedAt: timestamp,
       };
 
       // Load existing, replace or append
-      const all = loadAll();
-      const idx = all.findIndex((c) => c.name === as);
+      const all = loadAll(STORAGE_KEY);
+      const idx = all.findIndex((c) => c.id === as);
       if (idx >= 0) {
-        all[idx] = newCard;
+        const theName = name.trim()!==""?name:all[idx].name.trim() !== "" ? all[idx].name : as
+        all[idx] = {
+          ...newCard,
+          name: theName,
+        };
+
+        setCustom((s) => {
+          s.name = all[idx].name.trim() !== "" ? all[idx].name : as;
+        });
       } else {
+        setCustom((s) => {
+          s.name = newCard.name.trim() !== "" ? newCard.name : as;
+        });
         all.push(newCard);
       }
-      persistAll(all);
+      setCustom((s) => {
+        s.id = newCard.id || as;
+      });
+
+      persistAll(all, STORAGE_KEY);
 
       setSaved(true);
     },
-    [history.present, elements, faceConfig],
+    [elements, faceConfig, saved],
     3000
   );
 
@@ -69,9 +82,13 @@ export default function Save({ as }: { as: string }) {
       setSaved(false);
     }
   }, [history.present]);
-   useEffect(() => {
-    const item = loadAll().find((i)=>i.id === as)
-    if(item){
+  useEffect(() => {
+    const item = loadAll().find((i) => i.id === as);
+    if (item) {
+      setCustom((s) => {
+        s.id = item.id;
+        s.name = item.name;
+      });
       populate({
         elements: {
           back: item.config.back.elements,
@@ -80,8 +97,10 @@ export default function Save({ as }: { as: string }) {
         faceConfig: {
           back: item.config.back.faceConfig,
           front: item.config.front.faceConfig,
-        }
-      })
+        },
+      });
+    } else {
+      setSaved(false);
     }
   }, []);
 

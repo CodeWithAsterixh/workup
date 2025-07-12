@@ -1,4 +1,5 @@
-import React, { CSSProperties, PropsWithChildren } from "react";
+"use client"
+import React, { CSSProperties, PropsWithChildren, Ref, useEffect, useState } from "react";
 import { PassThroughElement } from "../PassThroughElement";
 import useTheme from "@/hooks/useTheme";
 
@@ -15,6 +16,8 @@ interface GridBackgroundProps extends PropsWithChildren<object> {
   bgColor?: string|[string,string];
   /** Any extra styling to merge */
   style?: CSSProperties;
+  ref?:Ref<Element>;
+  as?:React.ElementType
 }
 
 export function GridBackground({
@@ -25,15 +28,28 @@ export function GridBackground({
   majorLineColor = "#bbb",
   bgColor = "#fff",
   style,
+  ref,
+  as
 }: GridBackgroundProps) {
     const {theme} = useTheme()
+    const [isDark, setIsDark] = useState(false)
+
+    useEffect(() => {
+      if(document.querySelector("html")?.className.includes("dark")){
+        setIsDark(true)
+      }else{
+        setIsDark(theme === "dark"?true:false)
+      }
+
+    }, [theme])
+    
     
   // build the gradient layers
   const layers: string[] = [
     // small horizontal
-    `linear-gradient(to bottom, ${Array.isArray(lineColor)?`${theme==="dark"?lineColor[0]:lineColor[1]}`:lineColor} 1px, transparent 1px)`,
+    `linear-gradient(to bottom, ${Array.isArray(lineColor)?`${!isDark?lineColor[0]:lineColor[1]}`:lineColor} 1px, transparent 1px)`,
     // small vertical
-    `linear-gradient(to right, ${Array.isArray(lineColor)?`${theme==="dark"?lineColor[0]:lineColor[1]}`:lineColor} 1px, transparent 1px)`,
+    `linear-gradient(to right, ${Array.isArray(lineColor)?`${!isDark?lineColor[0]:lineColor[1]}`:lineColor} 1px, transparent 1px)`,
   ];
 
   const sizes: string[] = [
@@ -44,9 +60,9 @@ export function GridBackground({
   if (majorCellSize) {
     layers.push(
       // major horizontal
-      `linear-gradient(to bottom, ${Array.isArray(majorLineColor)?`${theme==="dark"?majorLineColor[0]:majorLineColor[1]}`:majorLineColor} 1px, transparent 1px)`,
+      `linear-gradient(to bottom, ${Array.isArray(majorLineColor)?`${!isDark?majorLineColor[0]:majorLineColor[1]}`:majorLineColor} 1px, transparent 1px)`,
       // major vertical
-      `linear-gradient(to right, ${Array.isArray(majorLineColor)?`${theme==="dark"?majorLineColor[0]:majorLineColor[1]}`:majorLineColor} 1px, transparent 1px)`
+      `linear-gradient(to right, ${Array.isArray(majorLineColor)?`${!isDark?majorLineColor[0]:majorLineColor[1]}`:majorLineColor} 1px, transparent 1px)`
     );
     sizes.push(
       `${majorCellSize}px ${majorCellSize}px`,
@@ -56,7 +72,7 @@ export function GridBackground({
 
   const gridStyle: CSSProperties = {
     position: "relative",
-    backgroundColor: Array.isArray(bgColor)?`${theme==="dark"?bgColor[0]:bgColor[1]}`:bgColor,
+    backgroundColor: Array.isArray(bgColor)?`${!isDark?bgColor[0]:bgColor[1]}`:bgColor,
     backgroundImage: layers.join(", "),
     backgroundSize: sizes.join(", "),
     width: "100%",
@@ -65,5 +81,5 @@ export function GridBackground({
     ...style,
   };
 
-  return <PassThroughElement style={gridStyle} asChild>{children}</PassThroughElement>;
+  return <PassThroughElement ref={ref} style={gridStyle} as={as||"div"}>{children}</PassThroughElement>;
 }

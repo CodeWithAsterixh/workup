@@ -11,6 +11,8 @@ import { ActionQueryParser } from "./queryParser";
 
 export const useEditorStore = create<EditorState & EditorStateActions>(
   (set, get) => ({
+    name:"",
+    id:"",
     faceConfig: {
       back: {
         id: "back",
@@ -335,5 +337,10 @@ export const useEditorStore = create<EditorState & EditorStateActions>(
         })
       );
     },
+    setCustom(updater){
+      set(
+        produce<EditorState>(state=>updater(state))
+      )
+    }
   })
 );

@@ -128,7 +128,7 @@ export function LayersPanel() {
   };
 
   return (
-    <Sidebar className="lg:w-64 p-2 bg-transparent">
+    <Sidebar className="lg:w-64 p-2 dark:!bg-zinc-800 lg:!bg-transparent">
       <SidebarHeader className="bg-zinc-200/50 dark:bg-zinc-700/50 backdrop-blur-lg rounded-sm p-2">
         <div className="flex justify-between items-center">
           <span className="flex items-center gap-2 text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-100">

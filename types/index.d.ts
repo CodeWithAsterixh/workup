@@ -5,6 +5,8 @@ interface Slot {
     children:React.ReactNode
 }
 
+export type loadProcess = "not-initialized"|"loading" | "initialized" | "retry" | "error" | "done"
+
 export interface SelectedCardItem {
     isSelectable: boolean;
     selected?: ElementConfig;

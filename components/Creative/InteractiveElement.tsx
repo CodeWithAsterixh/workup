@@ -6,6 +6,7 @@ import {
   PassThroughElement,
   PassThroughElementProps,
 } from "../PassThroughElement";
+import { useDragSpeed } from "@/hooks/drag-speed";
 
 /**
  * InteractiveElement wraps any element to add drag, resize, and optional snap behavior via interact.js.
@@ -23,6 +24,7 @@ export type InteractiveElementProps<As extends React.ElementType> = Omit<
   enableDrag?: boolean;
   enableResize?: boolean;
   enableSnap?: boolean;
+  /** Speed multiplier for dragging: 1 = normal, >1 faster, <1 slower */
 };
 
 const InteractiveElementInner = forwardRef(
@@ -31,7 +33,7 @@ const InteractiveElementInner = forwardRef(
       as,
       asChild,
       children,
-      snapGrid = { x: 0, y: 0 },
+      snapGrid = { x: 1, y: 1 },
       snapRange = 15,
       enableDrag = true,
       enableResize = true,
@@ -45,6 +47,7 @@ const InteractiveElementInner = forwardRef(
     forwardedRef: React.Ref<HTMLElement>
   ) => {
     const elementRef = useRef<HTMLElement | null>(null);
+    const {dragSpeed} = useDragSpeed()
     const setRefs = useCallback(
       (node: HTMLElement) => {
         elementRef.current = node;
@@ -57,7 +60,6 @@ const InteractiveElementInner = forwardRef(
       [forwardedRef]
     );
 
-    // Compute modifiers only once per dependencies
     const snapModifier = React.useMemo(() => {
       if (!enableSnap) return [];
       return [
@@ -81,8 +83,11 @@ const InteractiveElementInner = forwardRef(
           listeners: {
             move: (event) => {
               const target = event.target as HTMLElement;
-              const x = parseFloat(target.dataset.x || "0") + event.dx;
-              const y = parseFloat(target.dataset.y || "0") + event.dy;
+              // apply speed multiplier
+              const dx = event.dx * dragSpeed;
+              const dy = event.dy * dragSpeed;
+              const x = parseFloat(target.dataset.x || "0") + dx;
+              const y = parseFloat(target.dataset.y || "0") + dy;
               target.style.transform = `translate(${x}px, ${y}px)`;
               target.dataset.x = x.toString();
               target.dataset.y = y.toString();
@@ -142,6 +147,7 @@ const InteractiveElementInner = forwardRef(
     }, [
       enableDrag,
       enableResize,
+      dragSpeed,
       onInteractDragEnd,
       onInteractDragging,
       onInteractResizeEnd,

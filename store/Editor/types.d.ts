@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { DotNestedKeys, DotNestedKeysTypes } from "@/types";
 
 export type ElementType =
@@ -134,9 +136,11 @@ export type actionQueriesUpdate =
 export type actionQueriesPositioning =
   | `MOVE itemof id:${string} to ${"first"|"last"|"next"|"previous"}`
   | `MOVE ${CardFace}face to ${"first"|"last"|"next"|"previous"}`;
+
+export type actionOtherQuery = `UPDATE ${keyof EditorState}:${any}`
 export type actionQueriesDelete = `DELETE itemof id:${string}`;
 
-export type actionQueries =  actionQueriesPositioning|actionQueriesInsert | actionQueriesUpdate | actionQueriesDelete
+export type actionQueries =  actionOtherQuery|actionQueriesPositioning|actionQueriesInsert | actionQueriesUpdate | actionQueriesDelete
 
 export type tools = "select" | `add-${ElementType}` | "move";
 export interface EditorState {
@@ -148,7 +152,8 @@ export interface EditorState {
     front: FaceConfig;
     back: FaceConfig;
   };
-
+  name:string;
+  id:string
   selectedIds: string[];
   history: {
     past: actionQueries[];
@@ -187,4 +192,6 @@ export interface EditorStateActions {
   unSelectFaces: () => void;
   unSelectElements: () => void;
   removeElement: (id: string) => void;
+    setCustom:(updater: (state: EditorState) => void) => void
+
 }
