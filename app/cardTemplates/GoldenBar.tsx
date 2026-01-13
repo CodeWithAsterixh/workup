@@ -1,7 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Semantic color keys for Golden Bar theme
 export type ColorsMap = Record<
@@ -128,9 +128,9 @@ const createStyles = (cols: ColorsMap): Styles => ({
   qrWrapper:      { position: 'absolute', bottom: 16, right: 16, background: cols.backgroundBack, padding: 8, borderRadius: 8, boxShadow: '0 0 5px rgba(0,0,0,0.1)' } as React.CSSProperties,
 });
 
-export function GoldenBarFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function GoldenBarFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(front.logo_image, vals.logo_image);
@@ -152,9 +152,9 @@ export function GoldenBarFront({ front, options }: { front: FrontProps; options:
   );
 }
 
-export function GoldenBarBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function GoldenBarBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -185,8 +185,8 @@ export function GoldenBarBack({ back, options }: { back: BackProps; options: opt
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const GoldenBar: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const GoldenBar: Template & { options: Options } = {
   front: { component: GoldenBarFront, default: defaultGoldenBarFront },
   back:  { component: GoldenBarBack, default: defaultGoldenBarBack },
   options: defaultOptions,

@@ -1,7 +1,7 @@
 import React from 'react';
 import QRCode from 'react-qr-code';
-import type { options, Validator, ValidatorRule, ValidatorsMap } from '~/components/Options';
-import type { template } from '.';
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from '~/components/Options';
+import type { Template } from '.';
 
 // Semantic color keys for HexaSplit theme
 type ColorsMap = Record<
@@ -101,9 +101,9 @@ const createStyles = (cols: ColorsMap) => ({
   icon: { fontSize: 13, width: 16, textAlign: 'center' } as React.CSSProperties,
 });
 
-export function HexaSplitFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function HexaSplitFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(front.logo_image, vals.logo_image);
@@ -129,9 +129,9 @@ export function HexaSplitFront({ front, options }: { front: FrontProps; options:
   );
 }
 
-export function HexaSplitBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function HexaSplitBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -161,8 +161,8 @@ export function HexaSplitBack({ back, options }: { back: BackProps; options: opt
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const HexaSplit: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const HexaSplit: Template & { options: Options } = {
   front: { component: HexaSplitFront, default: defaultHexaSplitFront },
   back: { component: HexaSplitBack, default: defaultHexaSplitBack },
   options: defaultOptions,

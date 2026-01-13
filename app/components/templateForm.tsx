@@ -1,14 +1,11 @@
-import React from 'react'
-import { useForm, type UseFormReturn } from 'react-hook-form'
-import type { template } from '~/cardTemplates'
+import { type UseFormReturn } from 'react-hook-form'
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form'
 import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form'
 
 export type FormData = Record<string, any>
 
 
-export default function TemplateForm({ data,form,submit }: { data: FormData, form:UseFormReturn<FormData, any, FormData>, submit:(formData: FormData) => void }) {
+export default function TemplateForm({ data,form,submit }: Readonly<{ data: FormData, form:UseFormReturn<FormData, any, FormData>, submit:(formData: FormData) => void }>) {
   
   const renderFormField = (key: string, value: any, parentKey: string = '') => {
     const fieldId = parentKey ? `${parentKey}.${key}` : key

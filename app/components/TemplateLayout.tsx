@@ -2,22 +2,22 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
-import type { template } from "~/cardTemplates";
 import TemplateRenderer from "~/cardTemplates/__templateRenderer";
+import { splitCamelCase } from "~/lib/splitCamelCase";
 import type { previewGeneratorProcess } from "~/lib/types";
 import PreviewCard from "./PreviewCard";
 import type { FormData } from "./templateForm";
 import TemplateForm from "./templateForm";
 import { Button } from "./ui/button";
-import {splitCamelCase} from "~/lib/splitCamelCase"
-import Options, { type options } from "./Options";
+import OptionComponent,  { type Options } from "./Options";
+import type { Template } from "~/cardTemplates";
 
 type Props = {
-  template: template;
+  template: Template;
   templateId: string;
 };
 
-export default function TemplateLayout({ template, templateId }: Props) {
+export default function TemplateLayout({ template, templateId }: Readonly<Props>) {
   const [selectedSlide, setSelectedSlide] = useState<"front" | "back">("front");
   const [process, setProcess] = useState<previewGeneratorProcess>("loading");
   const [preview, setPreview] = useState<string>();
@@ -27,7 +27,7 @@ export default function TemplateLayout({ template, templateId }: Props) {
         ...template["back"].default,
       }
     : {};
-    const [options, setOptions] = useState<options>(template?template.options:{})
+    const [options, setOptions] = useState<Options>(template?template.options:{})
   const form = useForm<FormData>({
     defaultValues: defaultValues,
   });
@@ -136,23 +136,17 @@ export default function TemplateLayout({ template, templateId }: Props) {
               variant="outline"
               onClick={handleDownload}
               className="flex items-center gap-2"
-            >
-              <i className="pi pi-download text-sm"></i>
-              Download
-            </Button>
+            ><i className="pi pi-download text-sm"></i>Download</Button>
             <Button
               variant="default"
               onClick={handleShare}
               className="flex items-center gap-2"
-            >
-              <i className="pi pi-share-alt text-sm"></i>
-              Share
-            </Button>
+            ><i className="pi pi-share-alt text-sm"></i>Share</Button>
           </div>
         </article>
       </section>
       <div className="w-full flex gap-4 items-center justify-center pointer-events-none *:pointer-events-auto sticky bottom-5">
-        <Options options={options} onSave={(d)=>{
+        <OptionComponent options={options} onSave={(d)=>{
           setProcess("updating")
           setOptions(d)
         }}/>

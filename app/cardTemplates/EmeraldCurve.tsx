@@ -1,7 +1,6 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
 
 export type ColorsMap = Record<
   | "background"
@@ -121,9 +120,9 @@ const createStyles = (cols: ColorsMap) => ({
   } as React.CSSProperties,
 });
 
-export function EmeraldCurveFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function EmeraldCurveFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(front.logo_image, vals.logo_image);
@@ -146,9 +145,9 @@ export function EmeraldCurveFront({ front, options }: { front: FrontProps; optio
   );
 }
 
-export function EmeraldCurveBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function EmeraldCurveBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...options.validators };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -175,7 +174,7 @@ export function EmeraldCurveBack({ back, options }: { back: BackProps; options: 
   );
 }
 
-const defaultOptions: options = { validators: { ...defaultFrontValidators, ...defaultBackValidators }, colors: defaultColors };
+const defaultOptions: Options = { validators: { ...defaultFrontValidators, ...defaultBackValidators }, colors: defaultColors };
 export const EmeraldCurve = {
   front: { component: EmeraldCurveFront, default: defaultEmeraldCurveFront },
   back: { component: EmeraldCurveBack, default: defaultEmeraldCurveBack },

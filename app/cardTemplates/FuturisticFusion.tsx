@@ -1,12 +1,11 @@
 import React from "react";
-import QRCode from "react-qr-code";
 import type {
-  options,
+  Options,
   Validator,
   ValidatorRule,
   ValidatorsMap,
 } from "~/components/Options";
-import type { template } from ".";
+import type { Template } from ".";
 
 // Semantic color keys for Futuristic Fusion theme
 export type ColorsMap = Record<
@@ -227,12 +226,12 @@ const createStyles = (cols: ColorsMap) => ({
 export function FuturisticFusionFront({
   front,
   options,
-}: {
+}: Readonly<{
   front: FrontProps;
-  options: options;
-}) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+  options: Options;
+}>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(front.logo_image, vals.logo_image);
@@ -264,12 +263,12 @@ export function FuturisticFusionFront({
 export function FuturisticFusionBack({
   back,
   options,
-}: {
+}: Readonly<{
   back: BackProps;
-  options: options;
-}) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+  options: Options;
+}>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(back.logo_image, vals.logo_image);
@@ -293,11 +292,11 @@ export function FuturisticFusionBack({
 }
 
 // Template export
-const defaultOptions: options = {
+const defaultOptions: Options = {
   validators: defaultFrontValidators,
   colors: defaultColors,
 };
-export const FuturisticFusion: template & { options: options } = {
+export const FuturisticFusion: Template & { options: Options } = {
   front: { component: FuturisticFusionFront, default: defaultFuturisticFront },
   back: { component: FuturisticFusionBack, default: defaultFuturisticBack },
   options: defaultOptions,

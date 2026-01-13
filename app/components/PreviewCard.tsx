@@ -9,24 +9,20 @@ type Props = {
   setPreview?:(preview: string) => void;
 };
 
-export default function PreviewCard({ children, setProcess, status,setPreview }: Props) {
+export default function PreviewCard({ children, setProcess, status,setPreview }: Readonly<Props>) {
   const elementRef = useRef<HTMLDivElement>(null);
   const [previewImage, setPreviewImage] = useState<string>();
   const [previewProcess, setPreviewProcess] = useState<previewGeneratorProcess>(
     status || "loading"
   );
 
-  const handleUpdateProcess = (process: previewGeneratorProcess) => {
-    if (setProcess) {
-      setProcess(process);
-    }
-  };
+
   const debouncedProcess = useCallback(
-    debounce(() => {
+    debounce(async () => {
       const element = elementRef.current;
       if (element) {
         try {
-          html2canvas(element,{scale:2, backgroundColor:"rgba(0,0,0,0)"}).then((canvas) => {
+          await html2canvas(element,{scale:2, backgroundColor:"rgba(0,0,0,0)"}).then((canvas) => {
             canvas.toBlob((blob) => {
               if (blob) {
                 const url = URL.createObjectURL(blob);
@@ -40,7 +36,7 @@ export default function PreviewCard({ children, setProcess, status,setPreview }:
               }
             });
           });
-        } catch (error) {
+        } catch {
           setPreviewProcess("error");
           setProcess?.("error");
         }
@@ -83,7 +79,7 @@ export default function PreviewCard({ children, setProcess, status,setPreview }:
         <img className={
           cn(
             "previewImage",
-            previewProcess !== "ready" ?"loading":""
+            previewProcess === "ready" ?"":"loading"
           )
         } src={previewImage} alt="Preview" />
         {previewProcess !== "ready" && (

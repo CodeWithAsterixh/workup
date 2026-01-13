@@ -1,11 +1,9 @@
-import React from "react";
-import templates from "~/cardTemplates";
-import { Link } from "react-router";
-import PreviewCard from "~/components/PreviewCard";
-import TemplateRenderer from "~/cardTemplates/__templateRenderer";
-import type { Route } from "./+types/templates";
-import { Button } from "~/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router";
+import templates from "~/cardTemplates";
+import TemplateRenderer from "~/cardTemplates/__templateRenderer";
+import PreviewCard from "~/components/PreviewCard";
+import { Button } from "~/components/ui/button";
 
 
 

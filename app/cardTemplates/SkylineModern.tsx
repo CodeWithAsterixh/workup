@@ -1,7 +1,6 @@
 import React from "react";
-import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Colors map type: semantic names
 export type ColorsMap = Record<
@@ -74,8 +73,8 @@ interface BackProps {
   companyName: string;
   tagline: string;
 }
-export interface defaultFront extends FrontProps {}
-export interface defaultBack extends BackProps {}
+export interface DefaultFront extends FrontProps {}
+export interface DefaultBack extends BackProps {}
 
 export const defaultSkylineFront: FrontProps = {
   logo_image: "/logo.png",
@@ -137,14 +136,13 @@ const createStyles = (
   };
 };
 
-export function SkylineModernFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function SkylineModernFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   // apply validators
   const logo_image  = applyValidators(front.logo_image, vals.logo_image);
-  const companyName = applyValidators(front.companyName, vals.companyName);
   const tagline     = applyValidators(front.tagline, vals.tagline);
   const fullName    = applyValidators(front.fullName, vals.fullName);
   const jobTitle    = applyValidators(front.jobTitle, vals.jobTitle);
@@ -156,7 +154,7 @@ export function SkylineModernFront({ front, options }: { front: FrontProps; opti
   return (
     <div style={styles.container}>
       <div style={styles.squaresTopRight}>
-        {[8,12,16].map((size,i,arr) => <div key={i} style={styles.squareStyle(size, cols[(`color${arr.length-i}` as keyof typeof cols)])}></div>)}
+        {[8,12,16].map((size,i,arr) => <div key={i+1} style={styles.squareStyle(size, cols[(`color${arr.length-i}` as keyof typeof cols)])}></div>)}
       </div>
       <div style={styles.nameBlock}>
         <h1 style={styles.fullName}>{fullName}</h1>
@@ -175,16 +173,16 @@ export function SkylineModernFront({ front, options }: { front: FrontProps; opti
       
       </div>
       <div style={styles.squaresBottomLeft}>
-        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
+        {[16,12,8].map((size,i) => <div key={i+1} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
       </div>
       
     </div>
   );
 }
 
-export function SkylineModernBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function SkylineModernBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const stylesFactory = createStyles(cols);
   const styles = {
     ...stylesFactory,
@@ -192,14 +190,12 @@ export function SkylineModernBack({ back, options }: { back: BackProps; options:
   };
 
   const logo_image  = applyValidators(back.logo_image, vals.logo_image);
-  const companyName = applyValidators(back.companyName, vals.companyName);
   const tagline     = applyValidators(back.tagline, vals.tagline);
-  const initial     = companyName.charAt(0).toUpperCase();
 
   return (
     <div style={{ ...styles.container, overflow: 'hidden' }}>
       <div style={styles.squaresTopLeft}>
-        {[16,12,8].map((size,i) => <div key={i} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
+        {[16,12,8].map((size,i) => <div key={i+1} style={styles.squareStyle(size, cols[(`color${i+1}` as keyof typeof cols)])}></div>)}
       </div>
       <div style={styles.logoArea}>
         <img src={logo_image} alt="Logo" style={styles.logoImage} />
@@ -210,8 +206,8 @@ export function SkylineModernBack({ back, options }: { back: BackProps; options:
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const SkylineModern: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const SkylineModern: Template & { options: Options } = {
   front:   { component: SkylineModernFront, default: defaultSkylineFront },
   back:    { component: SkylineModernBack, default: defaultSkylineBack },
   options: defaultOptions,

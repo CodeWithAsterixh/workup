@@ -1,7 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Colors map type: semantic names for neon theme
 export type ColorsMap = Record<
@@ -114,9 +114,9 @@ const createStyles = (cols: ColorsMap): Styles => ({
   blob: (top, left, size, color) => ({ position: 'absolute', top, left, width: size, height: size, backgroundColor: color, borderRadius: '50%', filter: 'blur(20px)', opacity: 0.3 }),
 });
 
-export function NeonNexusFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function NeonNexusFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   // apply validators
@@ -150,9 +150,9 @@ export function NeonNexusFront({ front, options }: { front: FrontProps; options:
   );
 }
 
-export function NeonNexusBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function NeonNexusBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(back.logo_image, vals.logo_image);
@@ -169,8 +169,8 @@ export function NeonNexusBack({ back, options }: { back: BackProps; options: opt
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const NeonNexus: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const NeonNexus: Template & { options: Options } = {
   front: { component: NeonNexusFront, default: defaultNeonNexusFront },
   back:  { component: NeonNexusBack, default: defaultNeonNexusBack },
   options: defaultOptions,

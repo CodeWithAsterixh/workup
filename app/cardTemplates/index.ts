@@ -1,30 +1,30 @@
-import type { ComponentType, JSX } from "react";
-import SimpleProfessional from "./SimpleProfessional";
-import ModernElegant from "./ModernElegant";
-import VisionaryVogue from "./VisionaryVogue";
-import SkylineModern from "./SkylineModern";
-import FuturisticFusion from "./FuturisticFusion";
-import NeonNexus from "./NeonNexus";
+import type { JSX } from "react";
+import type { Options } from "~/components/Options";
 import EmeraldCurve from "./EmeraldCurve";
+import FuturisticFusion from "./FuturisticFusion";
 import GoldenBar from "./GoldenBar";
-import MaroonRibbon from "./MaroonRibbon";
-import HexaSplit from "./HexaSplit";
 import GoldWave from "./GoldWave";
-import type { options } from "~/components/Options";
+import HexaSplit from "./HexaSplit";
+import MaroonRibbon from "./MaroonRibbon";
+import ModernElegant from "./ModernElegant";
+import NeonNexus from "./NeonNexus";
+import SimpleProfessional from "./SimpleProfessional";
+import SkylineModern from "./SkylineModern";
+import VisionaryVogue from "./VisionaryVogue";
 
-export interface template {
+export interface Template {
     front: {
-        component:({options, front}: {options:options, front:any}) => JSX.Element
+        component:({options, front}: {options:Options, front:any}) => JSX.Element
         default:object,
     };
     back: {
-        component:({options, back}: {options:options, back:any}) => JSX.Element
+        component:({options, back}: {options:Options, back:any}) => JSX.Element
         default:object,
     };
-        options:options
+        options:Options
 
 }
-const templates:Record<string,template> = {
+const templates:Record<string,Template> = {
     SimpleProfessional,
     ModernElegant,
     VisionaryVogue,

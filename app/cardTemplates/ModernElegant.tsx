@@ -1,7 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Semantic color keys for Modern Elegant theme
 type ColorsMap = Record<
@@ -100,9 +100,9 @@ const createStyles = (cols: ColorsMap) => ({
   footer:             { textAlign: 'right', fontSize: '8px', color: cols.divider } as React.CSSProperties,
 });
 
-export function ModernElegantFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function ModernElegantFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image  = applyValidators(front.logo_image, vals.logo_image);
@@ -122,9 +122,9 @@ export function ModernElegantFront({ front, options }: { front: FrontProps; opti
   );
 }
 
-export function ModernElegantBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function ModernElegantBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -156,8 +156,8 @@ export function ModernElegantBack({ back, options }: { back: BackProps; options:
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const ModernElegant: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const ModernElegant: Template & { options: Options } = {
   front: { component: ModernElegantFront, default: defaultModernFront },
   back:  { component: ModernElegantBack, default: defaultModernBack },
   options: defaultOptions,

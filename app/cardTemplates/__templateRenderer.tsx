@@ -1,12 +1,12 @@
 import React from 'react';
-import type { template } from '.';
-import type { options } from '~/components/Options';
+import type { Template } from '.';
+import type { Options } from '~/components/Options';
 
 type TemplateRendererProps = {
-  template: template | undefined; // template can be undefined
+  template: Template | undefined; // template can be undefined
   data: any;
   position: 'front' | 'back';
-  options?:options
+  options?:Options
 };
 
 const TemplateRenderer: React.FC<TemplateRendererProps> = ({ template, data, position, options }) => {
@@ -20,7 +20,7 @@ const TemplateRenderer: React.FC<TemplateRendererProps> = ({ template, data, pos
     return <div>Template component not found for position: {position}</div>;
   }
 
-  return <TemplateComponent back={data} front={data} options={options?options:{}}  />;
+  return <TemplateComponent back={data} front={data} options={options ?? {}}  />;
 };
 
 export default TemplateRenderer;

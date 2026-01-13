@@ -1,7 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Semantic color keys for Maroon Ribbon theme
 export type ColorsMap = Record<
@@ -129,9 +129,9 @@ const createStyles = (cols: ColorsMap): Styles => ({
   qrWrapper:    { position: 'absolute', bottom: '16px', right: '16px', padding: '8px', borderRadius: '8px', backgroundColor: cols.backgroundBack, boxShadow: '0 0 4px rgba(0,0,0,0.1)' },
 });
 
-export function MaroonRibbonFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function MaroonRibbonFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image  = applyValidators(front.logo_image, vals.logo_image);
@@ -152,9 +152,9 @@ export function MaroonRibbonFront({ front, options }: { front: FrontProps; optio
   );
 }
 
-export function MaroonRibbonBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function MaroonRibbonBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -185,8 +185,8 @@ export function MaroonRibbonBack({ back, options }: { back: BackProps; options: 
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const MaroonRibbon: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const MaroonRibbon: Template & { options: Options } = {
   front: { component: MaroonRibbonFront, default: defaultMaroonRibbonFront },
   back:  { component: MaroonRibbonBack, default: defaultMaroonRibbonBack },
   options: defaultOptions,

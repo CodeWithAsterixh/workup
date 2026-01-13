@@ -1,6 +1,6 @@
 import React from "react";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 
 
@@ -97,12 +97,12 @@ const applyValidators = (
 export function VisionaryVogueFront({
   front,
   options,
-}: {
+}: Readonly<{
   front: FrontProps;
-  options: options;
-}) {
-  const vals = { ...defaultValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+  options: Options;
+}>) {
+  const vals = { ...defaultValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
 
   // Apply validation to every text field
   const companyName = applyValidators(front.companyName, vals.companyName);
@@ -180,12 +180,12 @@ export function VisionaryVogueFront({
 export function VisionaryVogueBack({
   back,
   options,
-}: {
+}: Readonly<{
   back: BackProps;
-  options: options;
-}) {
-  const vals = { ...defaultValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+  options: Options;
+}>) {
+  const vals = { ...defaultValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
 
   const companyName = applyValidators(back.companyName, vals.companyName);
   const title = applyValidators(back.title, vals.title);
@@ -229,11 +229,11 @@ export function VisionaryVogueBack({
 }
 
 // Template export
-const defaultOptions: options = {
+const defaultOptions: Options = {
   validators: defaultValidators,
   colors: defaultColors,
 };
-export const VisionaryVogue: template & { options: options } = {
+export const VisionaryVogue: Template & { options: Options } = {
   front: { component: VisionaryVogueFront, default: defaultVisionaryFront },
   back: { component: VisionaryVogueBack, default: defaultVisionaryBack },
   options: defaultOptions,

@@ -12,7 +12,7 @@ export default function Home() {
   const featuresRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    const split = SplitText.create(headlineRef.current!, { type: "chars, words" });
+    const split = SplitText.create(headlineRef.current, { type: "chars, words" });
     gsap.from(split.chars, {
       y: 20,
       opacity: 0,
@@ -146,7 +146,7 @@ export default function Home() {
             },
           ].map((step, i) => (
             <div
-              key={i}
+              key={i+1}
               className="flex flex-col items-center text-center gap-4"
             >
               {step.icon}

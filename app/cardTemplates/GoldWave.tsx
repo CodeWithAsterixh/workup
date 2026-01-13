@@ -1,7 +1,7 @@
 import React from "react";
 import QRCode from "react-qr-code";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Semantic color keys for Gold Wave theme
 export type ColorsMap = Record<
@@ -117,9 +117,9 @@ const createStyles = (cols: ColorsMap): Styles => ({
   title:         { fontSize: 12, margin: 0, color: cols.textBack } as React.CSSProperties,
 });
 
-export function GoldWaveFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function GoldWaveFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image = applyValidators(front.logo_image, vals.logo_image);
@@ -140,9 +140,9 @@ export function GoldWaveFront({ front, options }: { front: FrontProps; options: 
   );
 }
 
-export function GoldWaveBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function GoldWaveBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const fullName = applyValidators(back.fullName, vals.fullName);
@@ -168,8 +168,8 @@ export function GoldWaveBack({ back, options }: { back: BackProps; options: opti
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const GoldWave: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const GoldWave: Template & { options: Options } = {
   front: { component: GoldWaveFront, default: defaultGoldWaveFront },
   back:  { component: GoldWaveBack, default: defaultGoldWaveBack },
   options: defaultOptions,

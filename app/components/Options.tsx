@@ -24,29 +24,117 @@ export interface ValidatorRule {
 export type ValidatorsMap = Record<string, Record<keyof Validator, ValidatorRule>>;
 export type ColorsMap = Record<string, string>;
 
-// // Initial data:
-// const initialValidators: ValidatorsMap = {
-//   name: {
-//     maxLength: { value: 50, required: true, type: "number" },
-//     isUrl:     { value: false, required: false, type: "boolean" },
-//   },
-// };
-
-// const initialColors: ColorsMap = {
-//   primary: "#4f46e5",
-//   secondary: "#a855f7",
-//   accent: "#10b981",
-// };
-
 type SettingsPage = "main" | "validators" | "colors";
 
-export interface options { validators?: ValidatorsMap; colors?: ColorsMap }
+const MainPage = ({ onSetPage }: { onSetPage: (page: SettingsPage) => void }) => (
+  <div className="space-y-2">
+    <button
+      className="w-full text-left py-2 px-3 rounded bg-muted/20 hover:bg-muted"
+      onClick={() => onSetPage("validators")}
+    >
+      Validators
+    </button>
+    <button
+      className="w-full text-left py-2 px-3 rounded bg-muted/20 hover:bg-muted"
+      onClick={() => onSetPage("colors")}
+    >
+      Colors
+    </button>
+  </div>
+);
+
+const ValidatorsList = ({
+  validators,
+  onUpdate,
+}: {
+  validators: ValidatorsMap;
+  onUpdate: (field: string, rule: string, value: any) => void;
+}) => {
+  if (Object.keys(validators).length === 0) {
+    return (
+      <div className="w-full py-10 flex items-center justify-center">
+        No validator available
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {Object.entries(validators).map(([field, rules]) => (
+        <div key={field}>
+          <h5 className="font-medium mb-1">{field}</h5>
+          {Object.entries(rules).map(([rule, cfg]) => (
+            <div key={rule} className="flex items-center justify-between mb-2">
+              <label htmlFor={`${field}-${rule}`} className="capitalize">
+                {rule}
+              </label>
+              {cfg.type === "boolean" ? (
+                <Switch
+                  id={`${field}-${rule}`}
+                  checked={cfg.value}
+                  onCheckedChange={(val) => onUpdate(field, rule, val)}
+                />
+              ) : (
+                <Input
+                  id={`${field}-${rule}`}
+                  type={cfg.type === "number" ? "number" : "text"}
+                  value={cfg.value}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    const val = cfg.type === "number" ? Number(raw) : raw;
+                    onUpdate(field, rule, val);
+                  }}
+                  className="border rounded px-2 py-1 w-24"
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const ColorsList = ({
+  colors,
+  onUpdate,
+  hasValidators,
+}: {
+  colors: ColorsMap;
+  onUpdate: (name: string, value: string) => void;
+  hasValidators: boolean;
+}) => {
+  if (!hasValidators) {
+    return (
+      <div className="w-full py-10 flex items-center justify-center">
+        No Color available
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-[repeat(auto-fill,_minmax(5rem,_1fr))] gap-2">
+      {Object.entries(colors).map(([name, props]) => (
+        <div key={name} className="text-sm bg-white rounded-md border-gray-200 border-2 flex p-2 flex-col gap-2 items-center">
+          <ColorPicker
+            value={props}
+            onChange={(e) => onUpdate(name, typeof e === "string" ? e : "#fff")}
+            className="w-full aspect-square"
+          />
+          <em className="font-medium text-xs text-center not-italic">{splitCamelCase(name)}</em>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export interface Options { validators?: ValidatorsMap; colors?: ColorsMap }
 interface Props {
   onSave: (data: { validators: ValidatorsMap; colors: ColorsMap }) => void;
-  options?:options
+  options?: Options
 }
 
-export default function Options({ onSave, options }: Props) {
+export default function Options({ onSave, options }: Readonly<Props>) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState<SettingsPage>("main");
   // Local editable state:
@@ -61,108 +149,22 @@ export default function Options({ onSave, options }: Props) {
     setPage("main");
   };
 
-  const renderMainPage = () => (
-    <div className="space-y-2">
-      <button
-        className="w-full text-left py-2 px-3 rounded bg-muted/20 hover:bg-muted"
-        onClick={() => setPage("validators")}
-      >
-        Validators
-      </button>
-      <button
-        className="w-full text-left py-2 px-3 rounded bg-muted/20 hover:bg-muted"
-        onClick={() => setPage("colors")}
-      >
-        Colors
-      </button>
-    </div>
-  );
-
-  const renderValidators = () => (
-    <div>
-      {
-        Object.keys(localValidators).length>0?<div className="space-y-4">
-        {Object.entries(localValidators).map(([field, rules]) => (
-          <div key={field}>
-            <h5 className="font-medium mb-1">{field}</h5>
-            {Object.entries(rules).map(([rule, cfg]) => (
-              <div key={rule} className="flex items-center justify-between mb-2">
-                <label htmlFor={`${field}-${rule}`} className="capitalize">
-                  {rule}
-                </label>
-                {cfg.type === "boolean" ? (
-                  <Switch
-                    id={`${field}-${rule}`}
-                    checked={cfg.value}
-                    
-                    onCheckedChange={e=>{
-                      const val = e;
-                      setLocalValidators(prev => ({
-                        ...prev,
-                        [field]: {
-                          ...prev[field],
-                          [rule]: { ...prev[field][rule as keyof Validator], value: val }
-                        }
-                      }));
-                    }}
-                  />
-                ) : (
-                  <Input
-                    id={`${field}-${rule}`} 
-                    type={cfg.type === "number" ? "number" : "text"}
-                    value={cfg.value}
-                    onChange={e => {
-                      const raw = e.target.value;
-                      const val = cfg.type === "number" ? Number(raw) : raw;
-                      setLocalValidators(prev => ({
-                        ...prev,
-                        [field]: {
-                          ...prev[field],
-                          [rule]: { ...prev[field][rule as keyof Validator], value: val }
-                        }
-                      }));
-                    }}
-                    className="border rounded px-2 py-1 w-24"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>:
-      <div className="w-full py-10 flex items-center justify-center">
-        No validator available
-      </div>
+  const updateValidator = (field: string, rule: string, value: any) => {
+    setLocalValidators(prev => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [rule]: { ...prev[field][rule as keyof Validator], value }
       }
-    </div>
-  );
+    }));
+  };
 
-  const renderColors = () => (
-    <div>
-      
-      {Object.keys(localValidators).length>0?<div className="grid grid-cols-[repeat(auto-fill,_minmax(5rem,_1fr))] gap-2">
-        {Object.entries(localColors).map(([name, props]) => (
-          <div key={name} className="text-sm bg-white rounded-md border-gray-200 border-2 flex p-2 flex-col gap-2 items-center">
-            <ColorPicker
-            value={props}
-            onChange={e => {
-              setLocalColors(col => ({
-                ...col,
-                [name]:typeof e === "string"?e:"#fff" 
-              }))
-            }}
-            className="w-full aspect-square"
-            />
-            <em className="font-medium text-xs text-center not-italic">{splitCamelCase(name)}</em>
-
-          </div>
-        ))}
-      </div>:
-      <div className="w-full py-10 flex items-center justify-center">
-        No Color available
-      </div>}
-    </div>
-  );
+  const updateColor = (name: string, value: string) => {
+    setLocalColors(col => ({
+      ...col,
+      [name]: value
+    }));
+  };
 
   return (
     <Popover
@@ -195,9 +197,17 @@ export default function Options({ onSave, options }: Props) {
 
       </div>
         <div className="w-full p-4">
-          {page === "main" && renderMainPage()}
-        {page === "validators" && renderValidators()}
-        {page === "colors" && renderColors()}
+          {page === "main" && <MainPage onSetPage={setPage} />}
+          {page === "validators" && (
+            <ValidatorsList validators={localValidators} onUpdate={updateValidator} />
+          )}
+          {page === "colors" && (
+            <ColorsList
+              colors={localColors}
+              onUpdate={updateColor}
+              hasValidators={Object.keys(localValidators).length > 0}
+            />
+          )}
         </div>
 
         {/* Save button */}
@@ -208,3 +218,4 @@ export default function Options({ onSave, options }: Props) {
     </Popover>
   );
 }
+

@@ -1,6 +1,6 @@
 import React from "react";
-import type { options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
-import type { template } from ".";
+import type { Options, Validator, ValidatorRule, ValidatorsMap } from "~/components/Options";
+import type { Template } from ".";
 
 // Colors map type: semantic names
 export type ColorsMap = Record<
@@ -108,9 +108,9 @@ const createStyles = (
   contactItem:   { display: "flex", alignItems: "center", gap: "6px" },
 });
 
-export function SimpleProfessionalFront({ front, options }: { front: FrontProps; options: options }) {
-  const vals = { ...defaultFrontValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function SimpleProfessionalFront({ front, options }: Readonly<{ front: FrontProps; options: Options }>) {
+  const vals = { ...defaultFrontValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   // Apply validation
@@ -144,9 +144,9 @@ export function SimpleProfessionalFront({ front, options }: { front: FrontProps;
   );
 }
 
-export function SimpleProfessionalBack({ back, options }: { back: BackProps; options: options }) {
-  const vals = { ...defaultBackValidators, ...(options.validators || {}) };
-  const cols = { ...defaultColors, ...(options.colors || {}) };
+export function SimpleProfessionalBack({ back, options }: Readonly<{ back: BackProps; options: Options }>) {
+  const vals = { ...defaultBackValidators, ...(options.validators) };
+  const cols = { ...defaultColors, ...(options.colors) };
   const styles = createStyles(cols);
 
   const logo_image  = applyValidators(back.logo_image, vals.logo_image);
@@ -165,8 +165,8 @@ export function SimpleProfessionalBack({ back, options }: { back: BackProps; opt
 }
 
 // Template export
-const defaultOptions: options = { validators: defaultFrontValidators, colors: defaultColors };
-export const SimpleProfessional: template & { options: options } = {
+const defaultOptions: Options = { validators: defaultFrontValidators, colors: defaultColors };
+export const SimpleProfessional: Template & { options: Options } = {
   front: { component: SimpleProfessionalFront, default: defaultFrontProps },
   back: { component: SimpleProfessionalBack, default: defaultBackProps },
   options: defaultOptions,
